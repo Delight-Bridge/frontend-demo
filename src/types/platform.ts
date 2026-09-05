@@ -4,6 +4,7 @@ export type SocialProvider = "google" | "kakao" | "naver";
 export type User = {
   id: string;
   socialProvider: SocialProvider | "";
+  email: string;
   nickname: string;
   name: string;
   phone: string;

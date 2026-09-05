@@ -26,6 +26,12 @@ const db = {
   gallery: structuredClone(demoGallery),
   testimonies: structuredClone(demoTestimonies),
 };
+const emailPasswords: Record<string, string> = {
+  "demo-admin": "demo1234",
+  "demo-uploader": "demo1234",
+  "demo-user": "demo1234",
+  "demo-member-2": "demo1234",
+};
 const wait = () => new Promise((resolve) => window.setTimeout(resolve, 80));
 const bodyOf = (options: RequestInit) => (typeof options.body === "string" ? JSON.parse(options.body) : {});
 const currentUser = () => db.users.find((user) => user.id === sessionStorage.getItem("delight-demo-user")) ?? null;
@@ -115,9 +121,26 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     sessionStorage.setItem("delight-demo-user", map[body.account as keyof typeof map] ?? map.user);
     return { user: currentUser() } as T;
   }
+  if (route === "/auth/email/login" && method === "POST") {
+    const email = String(body.email ?? "")
+      .trim()
+      .toLowerCase();
+    const user = db.users.find((item) => item.email.toLowerCase() === email);
+    if (!user || emailPasswords[user.id] !== body.password)
+      throw new ApiError(401, "이메일 또는 비밀번호가 올바르지 않습니다.");
+    if (user.status !== "ACTIVE") throw new ApiError(403, "이용이 정지된 계정입니다.");
+    sessionStorage.setItem("delight-demo-user", user.id);
+    return { user } as T;
+  }
   if (route === "/auth/register" && method === "POST") {
-    if (!body.name?.trim() || !body.phone?.trim() || body.privacyConsent !== true)
-      throw new ApiError(400, "이름, 연락처와 개인정보 동의는 필수입니다.");
+    const email = String(body.email ?? "")
+      .trim()
+      .toLowerCase();
+    if (!email || !body.password || !body.name?.trim() || !body.phone?.trim() || body.privacyConsent !== true)
+      throw new ApiError(400, "이메일, 비밀번호, 이름, 연락처와 개인정보 동의는 필수입니다.");
+    if (String(body.password).length < 8) throw new ApiError(400, "비밀번호는 8자 이상 입력해 주세요.");
+    if (db.users.some((item) => item.id !== "demo-new-user" && item.email.toLowerCase() === email))
+      throw new ApiError(409, "이미 가입된 이메일입니다.");
     const user = db.users.find((item) => item.id === "demo-new-user");
     if (!user) throw new ApiError(404, "신규 회원 데모 계정을 찾을 수 없습니다.");
     const registeredAt = new Date().toISOString();
@@ -125,11 +148,13 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
       name: body.name.trim(),
       nickname: body.name.trim(),
       phone: body.phone.trim(),
-      socialProvider: body.socialProvider ?? "",
+      email,
+      socialProvider: "",
       privacyAgreedAt: registeredAt,
       onboardingCompletedAt: registeredAt,
       updatedAt: registeredAt,
     });
+    emailPasswords[user.id] = body.password;
     sessionStorage.setItem("delight-demo-user", user.id);
     return { user } as T;
   }

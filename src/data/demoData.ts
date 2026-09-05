@@ -16,6 +16,7 @@ export const demoUsers: User[] = [
   {
     id: "demo-admin",
     socialProvider: "google",
+    email: "admin@delightbridge.kr",
     nickname: "운영 관리자",
     name: "김관리",
     phone: "010-1000-1000",
@@ -30,6 +31,7 @@ export const demoUsers: User[] = [
   {
     id: "demo-uploader",
     socialProvider: "naver",
+    email: "uploader@delightbridge.kr",
     nickname: "김밥 만들기 팀장",
     name: "이도움",
     phone: "010-2000-2000",
@@ -44,6 +46,7 @@ export const demoUsers: User[] = [
   {
     id: "demo-user",
     socialProvider: "kakao",
+    email: "user@delightbridge.kr",
     nickname: "김은혜",
     name: "김은혜",
     phone: "010-3000-3000",
@@ -58,6 +61,7 @@ export const demoUsers: User[] = [
   {
     id: "demo-member-2",
     socialProvider: "google",
+    email: "member@delightbridge.kr",
     nickname: "박슬기",
     name: "박슬기",
     phone: "010-4000-4000",
@@ -72,6 +76,7 @@ export const demoUsers: User[] = [
   {
     id: "demo-new-user",
     socialProvider: "kakao",
+    email: "",
     nickname: "김철수",
     name: "김철수",
     phone: "",
