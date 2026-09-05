@@ -11,24 +11,28 @@ const providers = [
     id: "kakao",
     label: "카카오",
     loginLabel: "Kakao 계정으로 계속하기",
+    iconSrc: "/social-login-icons/kakao.webp",
     className: "bg-[#FEE500] text-[#191919]",
   },
   {
     id: "naver",
     label: "네이버",
     loginLabel: "Naver 계정으로 계속하기",
+    iconSrc: "/social-login-icons/naver.webp",
     className: "bg-[#03C75A] text-white",
   },
   {
     id: "google",
     label: "Google",
     loginLabel: "Google 계정으로 계속하기",
+    iconSrc: "/social-login-icons/google.webp",
     className: "border bg-white text-gray-800",
   },
 ] as const satisfies ReadonlyArray<{
   id: SocialProvider;
   label: string;
   loginLabel: string;
+  iconSrc: string;
   className: string;
 }>;
 
@@ -289,8 +293,9 @@ export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; retur
                 setError(`${item.label} OAuth 키가 아직 설정되지 않았습니다.`);
               }
             }}
-            className={`flex h-12 w-full items-center justify-center rounded-md text-sm font-bold ${item.className} ${oauthConfigured[item.id] ? "cursor-pointer" : "cursor-not-allowed opacity-50"}`}
+            className={`relative flex h-12 w-full items-center justify-center gap-2 rounded-md px-12 text-sm font-bold ${item.className} ${oauthConfigured[item.id] ? "cursor-pointer" : "cursor-not-allowed opacity-50"}`}
           >
+            <img src={item.iconSrc} alt="" aria-hidden="true" className="h-5 w-5 object-contain" />
             {item.loginLabel}
           </a>
         ))}
