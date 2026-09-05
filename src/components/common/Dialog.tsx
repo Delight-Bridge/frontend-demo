@@ -116,7 +116,7 @@ export function Dialog({
             )}
           </>
         ) : (
-          <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-5 py-4">
+          <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white p-4">
             <h2 id={titleId} className="text-lg font-bold text-gray-900">
               {title}
             </h2>

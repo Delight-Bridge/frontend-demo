@@ -66,6 +66,29 @@ try {
   await page.goto(`${process.env.APP_URL}/admin`, { waitUntil: "domcontentloaded" });
   await page.getByRole("heading", { name: "대시보드" }).waitFor();
   await page.getByText("전체 회원", { exact: true }).waitFor();
+  await page.goto(`${process.env.APP_URL}/volunteer?activity=activity-1`, { waitUntil: "domcontentloaded" });
+  await page.getByTestId("participation-dialog-scroll").waitFor();
+  const participationStyles = await page.evaluate(() => {
+    const scrollArea = document.querySelector('[data-testid="participation-dialog-scroll"]');
+    const select = scrollArea?.querySelector("select");
+    if (!scrollArea || !select) return null;
+    const scrollStyle = getComputedStyle(scrollArea);
+    const selectStyle = getComputedStyle(select);
+    return {
+      overflowY: scrollStyle.overflowY,
+      scrollbarWidth: scrollStyle.scrollbarWidth,
+      selectAppearance: selectStyle.appearance,
+      selectBackgroundPosition: selectStyle.backgroundPosition,
+    };
+  });
+  if (
+    !participationStyles ||
+    participationStyles.overflowY !== "auto" ||
+    participationStyles.selectAppearance !== "none" ||
+    !participationStyles.selectBackgroundPosition.includes("12px")
+  ) {
+    throw new Error(`신청 모달 스타일이 적용되지 않았습니다: ${JSON.stringify(participationStyles)}`);
+  }
   const errors = await page.locator('[role="alert"]').allTextContents();
   if (errors.length) throw new Error(`화면 오류가 표시되었습니다: ${errors.join(", ")}`);
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 } });
