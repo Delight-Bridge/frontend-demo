@@ -18,6 +18,15 @@ try {
   await page.getByRole("heading", { name: "어둠 속에 빛을 전하는 생명줄" }).waitFor();
   await page.getByRole("button", { name: "로그인", exact: true }).click();
   await page.getByRole("heading", { name: "로그인" }).waitFor();
+  await page.getByRole("button", { name: "이메일로 시작하기" }).click();
+  await page.getByRole("heading", { name: "이메일 로그인" }).waitFor();
+  const emailDialog = page.getByRole("dialog", { name: "이메일 로그인" });
+  await emailDialog.locator('input[type="email"]').fill("user@delightbridge.kr");
+  await emailDialog.locator('input[type="password"]').fill("demo1234");
+  await emailDialog.getByRole("button", { name: "이메일로 로그인" }).click();
+  await page.getByText("김은혜", { exact: true }).first().waitFor();
+  await page.getByRole("button", { name: "로그아웃" }).click();
+  await page.locator("summary").filter({ hasText: "데모 로그인" }).click();
   await page.getByRole("button", { name: "관리자" }).click();
   await page.getByText("운영 관리자", { exact: true }).first().waitFor();
   await page.goto(`${process.env.APP_URL}/admin`, { waitUntil: "domcontentloaded" });
