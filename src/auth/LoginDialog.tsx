@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Mail } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Mail } from "lucide-react";
 import { api } from "../api/client";
 import { Dialog } from "../components/common/Dialog";
 import { Field, FormError, inputClass } from "../components/common/FormControls";
@@ -36,18 +36,73 @@ const providers = [
   className: string;
 }>;
 
+function PasswordInput({
+  id,
+  label,
+  autoComplete,
+  value,
+  visible,
+  onChange,
+  onToggle,
+  placeholder,
+}: {
+  id: string;
+  label: string;
+  autoComplete: "current-password" | "new-password";
+  value: string;
+  visible: boolean;
+  onChange: (value: string) => void;
+  onToggle: () => void;
+  placeholder: string;
+}) {
+  return (
+    <div className="space-y-1.5 text-sm font-medium text-gray-700">
+      <label htmlFor={id}>{label}</label>
+      <div className="relative">
+        <input
+          id={id}
+          required
+          type={visible ? "text" : "password"}
+          minLength={8}
+          autoComplete={autoComplete}
+          className={`${inputClass} pr-11`}
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder={placeholder}
+        />
+        <button
+          type="button"
+          onClick={onToggle}
+          className="absolute inset-y-0 right-0 grid w-11 place-items-center rounded-r-md text-gray-500 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-500"
+          aria-label={`${label} ${visible ? "숨기기" : "표시"}`}
+          aria-pressed={visible}
+        >
+          {visible ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; returnUrl: string }) {
   const { oauthConfigured, refreshSession } = useAuth();
-  const [mode, setMode] = useState<"login" | "email-login" | "signup">("login");
+  const [mode, setMode] = useState<"login" | "email-login" | "signup" | "reset-password">("login");
   const [credentials, setCredentials] = useState({ email: "", password: "", passwordConfirm: "" });
   const [form, setForm] = useState({ name: "", phone: "" });
   const [agreed, setAgreed] = useState(true);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
 
-  const changeMode = (nextMode: "login" | "email-login" | "signup") => {
+  const changeMode = (nextMode: "login" | "email-login" | "signup" | "reset-password") => {
     setMode(nextMode);
     setError("");
+    setNotice("");
+    setShowPassword(false);
+    setShowPasswordConfirm(false);
   };
   const finishAuthentication = () => {
     onClose();
@@ -61,7 +116,11 @@ export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; retur
     try {
       await api("/auth/email/login", {
         method: "POST",
-        body: JSON.stringify({ email: credentials.email, password: credentials.password }),
+        body: JSON.stringify({
+          email: credentials.email,
+          password: credentials.password,
+          rememberMe,
+        }),
       });
       await refreshSession();
       finishAuthentication();
@@ -97,6 +156,11 @@ export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; retur
       setSaving(false);
     }
   };
+  const resetPassword = (event: React.FormEvent) => {
+    event.preventDefault();
+    setError("");
+    setNotice(`${credentials.email.trim()} 주소로 비밀번호 재설정 안내를 전송했습니다.`);
+  };
 
   if (mode === "email-login") {
     return (
@@ -110,7 +174,7 @@ export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; retur
             <ArrowLeft size={16} />
             다른 방법으로 로그인
           </button>
-          <Field label="이메일" required>
+          <Field label="이메일">
             <input
               required
               type="email"
@@ -121,35 +185,98 @@ export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; retur
               placeholder="name@example.com"
             />
           </Field>
-          <Field label="비밀번호" required>
-            <input
-              required
-              type="password"
-              minLength={8}
+          <div className="space-y-2">
+            <PasswordInput
+              id="login-password"
+              label="비밀번호"
               autoComplete="current-password"
-              className={inputClass}
               value={credentials.password}
-              onChange={(event) => setCredentials((current) => ({ ...current, password: event.target.value }))}
+              visible={showPassword}
+              onChange={(password) => setCredentials((current) => ({ ...current, password }))}
+              onToggle={() => setShowPassword((current) => !current)}
               placeholder="8자 이상 입력하세요"
             />
-          </Field>
+            <label className="flex w-fit cursor-pointer items-center gap-2 text-sm text-gray-700">
+              <input
+                type="checkbox"
+                className="h-4 w-4 rounded border-gray-300 accent-brand-600"
+                checked={rememberMe}
+                onChange={(event) => setRememberMe(event.target.checked)}
+              />
+              <span>로그인 유지</span>
+            </label>
+          </div>
           <FormError message={error} />
           <button
-            disabled={saving}
+            disabled={saving || !credentials.email.trim() || !credentials.password}
             className="h-11 w-full rounded-md bg-gray-900 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {saving ? "로그인 중..." : "이메일로 로그인"}
+            {saving ? "로그인 중..." : "로그인"}
           </button>
-          <p className="text-center text-sm text-gray-500">
-            이메일 계정이 없으신가요?{" "}
-            <button
-              type="button"
-              onClick={() => changeMode("signup")}
-              className="font-bold text-gray-900 underline underline-offset-4"
-            >
-              회원가입
-            </button>
+          <div className="flex items-center gap-3 py-1" aria-hidden="true">
+            <span className="h-px flex-1 bg-gray-200" />
+            <span className="text-xs text-gray-400">또는</span>
+            <span className="h-px flex-1 bg-gray-200" />
+          </div>
+          <button
+            type="button"
+            onClick={() => changeMode("signup")}
+            className="h-11 w-full rounded-md border border-gray-300 bg-white text-sm font-bold text-gray-800 hover:bg-gray-50"
+          >
+            이메일로 회원가입
+          </button>
+          <button
+            type="button"
+            onClick={() => changeMode("reset-password")}
+            className="h-10 w-full rounded-md text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+          >
+            비밀번호 재설정
+          </button>
+        </form>
+      </Dialog>
+    );
+  }
+
+  if (mode === "reset-password") {
+    return (
+      <Dialog title="비밀번호 재설정" onClose={onClose} size="sm">
+        <form onSubmit={resetPassword} className="space-y-4 p-5">
+          <button
+            type="button"
+            onClick={() => changeMode("email-login")}
+            className="inline-flex items-center gap-1.5 text-sm font-bold text-gray-500 hover:text-gray-900"
+          >
+            <ArrowLeft size={16} />
+            이메일 로그인으로 돌아가기
+          </button>
+          <p className="text-sm leading-6 text-gray-600">
+            가입한 이메일 주소를 입력하면 비밀번호 재설정 안내를 보내드립니다.
           </p>
+          <Field label="이메일" required>
+            <input
+              required
+              type="email"
+              autoComplete="email"
+              className={inputClass}
+              value={credentials.email}
+              onChange={(event) => {
+                setCredentials((current) => ({ ...current, email: event.target.value }));
+                setNotice("");
+              }}
+              placeholder="name@example.com"
+            />
+          </Field>
+          {notice && (
+            <p role="status" className="rounded-md bg-green-50 p-3 text-sm text-green-700">
+              {notice}
+            </p>
+          )}
+          <button
+            disabled={!credentials.email.trim()}
+            className="h-11 w-full rounded-md bg-gray-900 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            재설정 안내 받기
+          </button>
         </form>
       </Dialog>
     );
@@ -174,30 +301,26 @@ export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; retur
             />
           </Field>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="비밀번호" required>
-              <input
-                required
-                type="password"
-                minLength={8}
-                autoComplete="new-password"
-                className={inputClass}
-                value={credentials.password}
-                onChange={(event) => setCredentials((current) => ({ ...current, password: event.target.value }))}
-                placeholder="8자 이상"
-              />
-            </Field>
-            <Field label="비밀번호 확인" required>
-              <input
-                required
-                type="password"
-                minLength={8}
-                autoComplete="new-password"
-                className={inputClass}
-                value={credentials.passwordConfirm}
-                onChange={(event) => setCredentials((current) => ({ ...current, passwordConfirm: event.target.value }))}
-                placeholder="한 번 더 입력"
-              />
-            </Field>
+            <PasswordInput
+              id="signup-password"
+              label="비밀번호"
+              autoComplete="new-password"
+              value={credentials.password}
+              visible={showPassword}
+              onChange={(password) => setCredentials((current) => ({ ...current, password }))}
+              onToggle={() => setShowPassword((current) => !current)}
+              placeholder="8자 이상"
+            />
+            <PasswordInput
+              id="signup-password-confirm"
+              label="비밀번호 확인"
+              autoComplete="new-password"
+              value={credentials.passwordConfirm}
+              visible={showPasswordConfirm}
+              onChange={(passwordConfirm) => setCredentials((current) => ({ ...current, passwordConfirm }))}
+              onToggle={() => setShowPasswordConfirm((current) => !current)}
+              placeholder="한 번 더 입력"
+            />
           </div>
           <div className="border-t pt-4">
             <p className="mb-4 text-sm font-bold text-brand-700">최초 가입 시 필수 입력</p>
@@ -267,7 +390,9 @@ export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; retur
   return (
     <Dialog title="로그인" onClose={onClose} size="sm">
       <div className="space-y-3 p-5">
-        <p className="pb-2 text-sm leading-relaxed text-gray-600">서비스 이용(신청/댓글)을 위해 로그인이 필요합니다.</p>
+        <p className="pb-2 text-sm leading-relaxed text-gray-600 text-center">
+          서비스 이용(신청/댓글)을 위해 로그인이 필요합니다.
+        </p>
         {providers.map((item) => (
           <a
             key={item.id}
@@ -301,7 +426,7 @@ export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; retur
         <div className="mt-5 flex items-center pt-5 text-center">
           <button
             type="button"
-            onClick={() => changeMode("signup")}
+            onClick={() => changeMode("reset-password")}
             className="h-11 flex-1 rounded-md text-sm font-bold text-gray-900 hover:bg-gray-50"
           >
             기존 계정 찾기

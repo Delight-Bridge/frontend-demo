@@ -32,9 +32,16 @@ const emailPasswords: Record<string, string> = {
   "demo-user": "demo1234",
   "demo-member-2": "demo1234",
 };
+const sessionKey = "delight-demo-user";
 const wait = () => new Promise((resolve) => window.setTimeout(resolve, 80));
 const bodyOf = (options: RequestInit) => (typeof options.body === "string" ? JSON.parse(options.body) : {});
-const currentUser = () => db.users.find((user) => user.id === sessionStorage.getItem("delight-demo-user")) ?? null;
+const currentUser = () =>
+  db.users.find((user) => user.id === (sessionStorage.getItem(sessionKey) ?? localStorage.getItem(sessionKey))) ?? null;
+const storeCurrentUser = (userId: string, remember = false) => {
+  sessionStorage.removeItem(sessionKey);
+  localStorage.removeItem(sessionKey);
+  (remember ? localStorage : sessionStorage).setItem(sessionKey, userId);
+};
 const needsOnboarding = () => {
   const user = currentUser();
   return Boolean(user && (!user.name || !user.phone || !user.privacyAgreedAt || !user.onboardingCompletedAt));
@@ -118,7 +125,7 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     } as T;
   if (route === "/auth/demo" && method === "POST") {
     const map = { admin: "demo-admin", uploader: "demo-uploader", user: "demo-user", new: "demo-new-user" } as const;
-    sessionStorage.setItem("delight-demo-user", map[body.account as keyof typeof map] ?? map.user);
+    storeCurrentUser(map[body.account as keyof typeof map] ?? map.user);
     return { user: currentUser() } as T;
   }
   if (route === "/auth/email/login" && method === "POST") {
@@ -129,7 +136,7 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     if (!user || emailPasswords[user.id] !== body.password)
       throw new ApiError(401, "이메일 또는 비밀번호가 올바르지 않습니다.");
     if (user.status !== "ACTIVE") throw new ApiError(403, "이용이 정지된 계정입니다.");
-    sessionStorage.setItem("delight-demo-user", user.id);
+    storeCurrentUser(user.id, body.rememberMe === true);
     return { user } as T;
   }
   if (route === "/auth/register" && method === "POST") {
@@ -155,11 +162,12 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
       updatedAt: registeredAt,
     });
     emailPasswords[user.id] = body.password;
-    sessionStorage.setItem("delight-demo-user", user.id);
+    storeCurrentUser(user.id);
     return { user } as T;
   }
   if (route === "/auth/logout" && method === "POST") {
-    sessionStorage.removeItem("delight-demo-user");
+    sessionStorage.removeItem(sessionKey);
+    localStorage.removeItem(sessionKey);
     return undefined as T;
   }
   if (route === "/me") {
