@@ -37,7 +37,7 @@ const providers = [
 }>;
 
 export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; returnUrl: string }) {
-  const { oauthConfigured, demoLoginEnabled, refreshSession } = useAuth();
+  const { oauthConfigured, refreshSession } = useAuth();
   const [mode, setMode] = useState<"login" | "email-login" | "signup">("login");
   const [credentials, setCredentials] = useState({ email: "", password: "", passwordConfirm: "" });
   const [form, setForm] = useState({ name: "", phone: "" });
@@ -53,16 +53,6 @@ export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; retur
     onClose();
     const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
     if (returnUrl && returnUrl !== currentUrl) window.location.href = returnUrl;
-  };
-  const demoLogin = async (account: "admin" | "uploader" | "user") => {
-    setError("");
-    try {
-      await api("/auth/demo", { method: "POST", body: JSON.stringify({ account }) });
-      await refreshSession();
-      finishAuthentication();
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "로그인하지 못했습니다.");
-    }
   };
   const emailLogin = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -325,22 +315,6 @@ export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; retur
             회원가입
           </button>
         </div>
-        {demoLoginEnabled && (
-          <div className="mt-5 border-t pt-5">
-            <p className="mb-3 text-center text-xs font-bold text-gray-500">데모 계정으로 로그인</p>
-            <div className="grid grid-cols-3 gap-2">
-              <button onClick={() => demoLogin("user")} className="rounded-md border px-2 py-2 text-xs">
-                일반 사용자
-              </button>
-              <button onClick={() => demoLogin("uploader")} className="rounded-md border px-2 py-2 text-xs">
-                업로더
-              </button>
-              <button onClick={() => demoLogin("admin")} className="rounded-md border px-2 py-2 text-xs">
-                관리자
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </Dialog>
   );

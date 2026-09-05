@@ -9,6 +9,7 @@ type AuthContextValue = Session & {
   openLogin: (returnUrl?: string) => void;
   closeLogin: () => void;
   refreshSession: () => Promise<void>;
+  demoLogin: (account: "admin" | "uploader" | "user") => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -45,6 +46,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setSession((current) => ({ ...current, user: null }));
   }, []);
 
+  const demoLogin = useCallback(
+    async (account: "admin" | "uploader" | "user") => {
+      await api("/auth/demo", { method: "POST", body: JSON.stringify({ account }) });
+      await refreshSession();
+      setLoginOpen(false);
+    },
+    [refreshSession],
+  );
+
   const openLogin = useCallback((nextReturnUrl?: string) => {
     setReturnUrl(nextReturnUrl ?? `${window.location.pathname}${window.location.search}${window.location.hash}`);
     setLoginOpen(true);
@@ -52,8 +62,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const closeLogin = useCallback(() => setLoginOpen(false), []);
 
   const value = useMemo(
-    () => ({ ...session, loading, openLogin, closeLogin, refreshSession, logout }),
-    [session, loading, openLogin, closeLogin, refreshSession, logout],
+    () => ({ ...session, loading, openLogin, closeLogin, refreshSession, demoLogin, logout }),
+    [session, loading, openLogin, closeLogin, refreshSession, demoLogin, logout],
   );
 
   return (
