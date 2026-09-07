@@ -1,4 +1,4 @@
-import { EyeOff, Pencil, Plus, Trash2 } from "lucide-react";
+import { EyeOff, LayoutGrid, List, Pencil, Plus, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -8,6 +8,7 @@ import { SiteHeader } from "../layout/SiteHeader";
 import { Pagination } from "../common/Pagination";
 import { NewsForm } from "./NewsForm";
 import { PageBreadcrumb } from "../common/PageBreadcrumb";
+import { NewsCard } from "./NewsCard";
 
 const pageSize = 10;
 
@@ -19,6 +20,7 @@ export function NewsListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
 
   const load = useCallback(async () => {
     try {
@@ -64,9 +66,7 @@ export function NewsListPage() {
             <div>
               <p className="text-xs font-bold tracking-[0.2em] text-brand-700">NEWS & CONTENTS</p>
               <h1 className="mt-3 font-serif text-3xl font-bold text-gray-950 md:text-4xl">우리 곁의 아픔</h1>
-              <p className="mt-3 text-sm leading-6 text-gray-500">
-                외면할 수 없는 다음 세대와 청년들의 이야기
-              </p>
+              <p className="mt-3 text-sm leading-6 text-gray-500">외면할 수 없는 다음 세대와 청년들의 이야기</p>
             </div>
             {admin && (
               <button
@@ -92,79 +92,117 @@ export function NewsListPage() {
           )}
           {!loading && (
             <section className="mt-10" aria-label="기사 목록">
-              <div className="overflow-x-auto rounded-lg border bg-white">
-                <table className="w-full min-w-[720px] border-collapse text-left text-sm">
-                  <thead className="border-b bg-gray-100 text-xs font-bold text-gray-600">
-                    <tr>
-                      <th className="w-20 px-4 py-4 text-center">No.</th>
-                      <th className="px-5 py-4 text-center">기사 제목</th>
-                      <th className="w-40 px-5 py-4 text-center">출처</th>
-                      <th className="w-36 px-5 py-4 text-center">게시일</th>
-                      {admin && <th className="w-24 px-4 py-4 text-center">관리</th>}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
-                    {pageArticles.map((article, index) => (
-                      <tr key={article.id} className="text-gray-700 hover:bg-gray-50">
-                        <td className="px-4 py-5 text-center text-gray-500">
-                          {articles.length - ((currentPage - 1) * pageSize + index)}
-                        </td>
-                        <td className="px-5 py-5">
-                          <a
-                            href={`/news/${article.id}`}
-                            className="flex items-center gap-4 font-bold text-gray-950 hover:text-brand-700"
-                          >
-                            <img
-                              src={article.thumbnailUrl}
-                              alt=""
-                              className="h-14 w-20 shrink-0 rounded-md bg-gray-100 object-cover"
-                            />
-                            <span className="inline-flex items-center gap-2">
-                              {!article.isVisible && (
-                                <EyeOff size={15} className="shrink-0 text-gray-400" aria-label="비공개" />
-                              )}
-                              {article.title}
-                            </span>
-                          </a>
-                        </td>
-                        <td className="px-5 py-5 text-center text-gray-600">{article.sourceName || "출처 미상"}</td>
-                        <td className="px-5 py-5 text-center text-gray-500">
-                          <time dateTime={article.publishedAt}>{article.publishedAt}</time>
-                        </td>
-                        {admin && (
-                          <td className="px-4 py-3">
-                            <div className="flex justify-center">
-                              <button
-                                type="button"
-                                onClick={() => setEditing(article)}
-                                className="grid h-9 w-9 place-items-center rounded-md text-gray-500 hover:bg-gray-100"
-                                aria-label={`${article.title} 수정`}
-                              >
-                                <Pencil size={16} />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => void remove(article)}
-                                className="grid h-9 w-9 place-items-center rounded-md text-red-500 hover:bg-red-50"
-                                aria-label={`${article.title} 삭제`}
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                          </td>
-                        )}
-                      </tr>
-                    ))}
-                    {!articles.length && (
-                      <tr>
-                        <td colSpan={admin ? 5 : 4} className="h-56 text-center text-gray-500">
-                          등록된 기사가 없습니다.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+              <div className="mb-4 flex justify-end">
+                <div className="inline-flex rounded-md border bg-white p-1" role="group" aria-label="기사 보기 방식">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("grid")}
+                    className={`flex h-9 items-center gap-2 rounded px-3 text-xs font-bold ${viewMode === "grid" ? "bg-gray-900 text-white" : "text-gray-500 hover:bg-gray-100"}`}
+                    aria-pressed={viewMode === "grid"}
+                  >
+                    <LayoutGrid size={16} aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("list")}
+                    className={`flex h-9 items-center gap-2 rounded px-3 text-xs font-bold ${viewMode === "list" ? "bg-gray-900 text-white" : "text-gray-500 hover:bg-gray-100"}`}
+                    aria-pressed={viewMode === "list"}
+                  >
+                    <List size={16} aria-hidden="true" />
+                  </button>
+                </div>
               </div>
+              {viewMode === "list" ? (
+                <div className="overflow-x-auto rounded-lg border bg-white">
+                  <table className="w-full min-w-[720px] border-collapse text-left text-sm">
+                    <thead className="border-b bg-gray-100 text-xs font-bold text-gray-600">
+                      <tr>
+                        <th className="w-20 px-4 py-4 text-center">No.</th>
+                        <th className="px-5 py-4 text-center">기사 제목</th>
+                        <th className="w-40 px-5 py-4 text-center">출처</th>
+                        <th className="w-36 px-5 py-4 text-center">게시일</th>
+                        {admin && <th className="w-24 px-4 py-4 text-center">관리</th>}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y">
+                      {pageArticles.map((article, index) => (
+                        <tr key={article.id} className="text-gray-700 hover:bg-gray-50">
+                          <td className="px-4 py-5 text-center text-gray-500">
+                            {articles.length - ((currentPage - 1) * pageSize + index)}
+                          </td>
+                          <td className="px-5 py-5">
+                            <a
+                              href={`/news/${article.id}`}
+                              className="flex items-center gap-4 font-bold text-gray-950 hover:text-brand-700"
+                            >
+                              <img
+                                src={article.thumbnailUrl}
+                                alt=""
+                                className="h-14 w-20 shrink-0 rounded-md bg-gray-100 object-cover"
+                              />
+                              <span className="inline-flex items-center gap-2">
+                                {!article.isVisible && (
+                                  <EyeOff size={15} className="shrink-0 text-gray-400" aria-label="비공개" />
+                                )}
+                                {article.title}
+                              </span>
+                            </a>
+                          </td>
+                          <td className="px-5 py-5 text-center text-gray-600">{article.sourceName || "출처 미상"}</td>
+                          <td className="px-5 py-5 text-center text-gray-500">
+                            <time dateTime={article.publishedAt}>{article.publishedAt}</time>
+                          </td>
+                          {admin && (
+                            <td className="px-4 py-3">
+                              <div className="flex justify-center">
+                                <button
+                                  type="button"
+                                  onClick={() => setEditing(article)}
+                                  className="grid h-9 w-9 place-items-center rounded-md text-gray-500 hover:bg-gray-100"
+                                  aria-label={`${article.title} 수정`}
+                                >
+                                  <Pencil size={16} />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => void remove(article)}
+                                  className="grid h-9 w-9 place-items-center rounded-md text-red-500 hover:bg-red-50"
+                                  aria-label={`${article.title} 삭제`}
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
+                            </td>
+                          )}
+                        </tr>
+                      ))}
+                      {!articles.length && (
+                        <tr>
+                          <td colSpan={admin ? 5 : 4} className="h-56 text-center text-gray-500">
+                            등록된 기사가 없습니다.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              ) : pageArticles.length ? (
+                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                  {pageArticles.map((article) => (
+                    <NewsCard
+                      key={article.id}
+                      article={article}
+                      canManage={admin}
+                      onEdit={() => setEditing(article)}
+                      onDelete={() => void remove(article)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="grid h-56 place-items-center rounded-lg border bg-white text-sm text-gray-500">
+                  등록된 기사가 없습니다.
+                </div>
+              )}
               <Pagination
                 page={currentPage}
                 totalPages={totalPages}
