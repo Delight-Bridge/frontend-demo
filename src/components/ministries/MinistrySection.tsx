@@ -10,6 +10,15 @@ import { MinistryModal } from "./MinistryModal";
 import { Pagination } from "../common/Pagination";
 import { PageBreadcrumb } from "../common/PageBreadcrumb";
 
+const shuffleTeams = (teams: MinistryTeam[]) => {
+  const shuffled = [...teams];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+  }
+  return shuffled;
+};
+
 export function MinistrySection({ showBreadcrumb = false }: { showBreadcrumb?: boolean }) {
   const { user } = useAuth();
   const canCreate = user?.role === "ADMIN" || user?.role === "AUTHORIZED_UPLOADER";
@@ -21,7 +30,7 @@ export function MinistrySection({ showBreadcrumb = false }: { showBreadcrumb?: b
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const pageSize = 6;
+  const pageSize = 9;
   const [canScrollTeamsLeft, setCanScrollTeamsLeft] = useState(false);
   const [canScrollTeamsRight, setCanScrollTeamsRight] = useState(false);
   const teamScrollerRef = useRef<HTMLDivElement>(null);
@@ -31,7 +40,7 @@ export function MinistrySection({ showBreadcrumb = false }: { showBreadcrumb?: b
         api<MinistryTeam[]>("/teams"),
         api<GalleryPost[]>(`/gallery${canCreate ? "?includeHidden=true" : ""}`),
       ]);
-      setTeams(teamData);
+      setTeams(shuffleTeams(teamData));
       setPosts(postData);
       setPage(1);
       setError("");
@@ -71,7 +80,10 @@ export function MinistrySection({ showBreadcrumb = false }: { showBreadcrumb?: b
     scroller.scrollBy({ left: direction * scroller.clientWidth * 0.75, behavior: "smooth" });
   };
 
-  const visiblePosts = filter === "all" ? posts : posts.filter((post) => post.ministryTeamId === filter);
+  const visiblePosts =
+    filter === "all"
+      ? [...posts].sort((first, second) => Date.parse(second.createdAt) - Date.parse(first.createdAt))
+      : posts.filter((post) => post.ministryTeamId === filter);
   const pagePosts = visiblePosts.slice((page - 1) * pageSize, page * pageSize);
   const selectedIndex = selected ? visiblePosts.findIndex((post) => post.id === selected.id) : -1;
   const openPostAtIndex = (index: number) => {
@@ -95,7 +107,12 @@ export function MinistrySection({ showBreadcrumb = false }: { showBreadcrumb?: b
       <div className="mx-auto max-w-6xl">
         {showBreadcrumb && <PageBreadcrumb items={[{ label: "우리의 응답" }]} className="mb-8" />}
         <div className="mb-10 flex items-end justify-between gap-4">
-          <SectionHeading title="우리의 응답" description="어둠 속에 빛을 비추는 15개 사역팀의 현장" align="left" />
+          <SectionHeading
+            title="우리의 응답"
+            description="어둠 속에 빛을 비추는 15개 사역팀의 현장"
+            href="/activities"
+            align="left"
+          />
           {canCreate && (
             <button
               onClick={() => setEditing("new")}

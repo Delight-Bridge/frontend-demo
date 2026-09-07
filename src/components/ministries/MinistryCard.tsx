@@ -14,6 +14,10 @@ export function MinistryCard({
   onEdit: () => void;
   onDelete: () => void;
 }) {
+  const uploadedAt = Date.parse(post.createdAt);
+  const uploadAge = Date.now() - uploadedAt;
+  const isNew = Number.isFinite(uploadedAt) && uploadAge >= 0 && uploadAge <= 7 * 24 * 60 * 60 * 1000;
+
   return (
     <article className="group relative aspect-square overflow-hidden bg-gray-200">
       <button
@@ -32,6 +36,11 @@ export function MinistryCard({
           <span className="mb-1 block text-[11px] font-bold text-brand-300">{post.team?.name}</span>
           <span className="line-clamp-2 block text-sm font-bold md:text-base">{post.title}</span>
         </span>
+        {isNew && (
+          <span className="absolute left-3 top-3 rounded-full bg-brand-600 px-2.5 py-1 text-[10px] font-bold tracking-wider text-white shadow-md">
+            NEW
+          </span>
+        )}
         {post.additionalImages.length > 0 && (
           <span
             className="absolute right-4 top-2 grid h-4 w-4 place-items-center text-white"
