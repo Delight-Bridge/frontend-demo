@@ -17,13 +17,6 @@ const statusOptions: Array<[ApplicationStatus, string]> = [
   ["CANCELLED", "취소"],
   ["COMPLETED", "참여 완료"],
 ];
-const nextStatuses: Record<ApplicationStatus, ApplicationStatus[]> = {
-  SUBMITTED: ["REJECTED", "CANCELLED"],
-  LEADER_CONFIRMED: ["COMPLETED"],
-  REJECTED: [],
-  CANCELLED: [],
-  COMPLETED: [],
-};
 
 export function ApplicationForm({
   application,
@@ -147,25 +140,10 @@ export function ApplicationForm({
             <option value="CONTINUOUS">지속 참여</option>
           </select>
         </Field>
-        <Field label="처리 상태" required>
-          <select
-            className={inputClass}
-            value={form.status}
-            disabled={Boolean(application && !nextStatuses[application.status].length)}
-            onChange={(event) => set("status", event.target.value as ApplicationStatus)}
-          >
-            {statusOptions
-              .filter(([value]) =>
-                application
-                  ? value === application.status || nextStatuses[application.status].includes(value)
-                  : value === "SUBMITTED",
-              )
-              .map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-          </select>
+        <Field label="처리 상태">
+          <div className="flex min-h-10 items-center rounded-md border bg-gray-50 px-3 text-sm font-bold text-gray-700">
+            {statusOptions.find(([value]) => value === form.status)?.[1] ?? form.status}
+          </div>
         </Field>
         <Field label="신청 출처" required>
           <select

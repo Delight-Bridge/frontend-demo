@@ -16,12 +16,12 @@ const statuses: Array<[ApplicationStatus, string]> = [
   ["CANCELLED", "취소"],
   ["COMPLETED", "참여 완료"],
 ];
-const nextStatuses: Record<ApplicationStatus, ApplicationStatus[]> = {
-  SUBMITTED: ["REJECTED", "CANCELLED"],
-  LEADER_CONFIRMED: ["COMPLETED"],
-  REJECTED: [],
-  CANCELLED: [],
-  COMPLETED: [],
+const statusColors: Record<ApplicationStatus, string> = {
+  SUBMITTED: "bg-blue-50 text-blue-700",
+  LEADER_CONFIRMED: "bg-violet-50 text-violet-700",
+  REJECTED: "bg-red-50 text-red-700",
+  CANCELLED: "bg-gray-100 text-gray-500",
+  COMPLETED: "bg-emerald-50 text-emerald-700",
 };
 const sourceLabel = { SITE: "사이트 신청", MANUAL: "직접 등록" } as const;
 
@@ -71,17 +71,6 @@ export function ApplicationsManager() {
     return () => window.clearTimeout(timer);
   }, [load]);
 
-  const updateStatus = async (application: VolunteerApplication, nextStatus: ApplicationStatus) => {
-    try {
-      await api(`/admin/applications/${application.id}`, {
-        method: "PATCH",
-        body: JSON.stringify({ status: nextStatus }),
-      });
-      await load();
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "상태를 변경하지 못했습니다.");
-    }
-  };
   const remove = async (application: VolunteerApplication) => {
     if (!window.confirm(`‘${application.applicantName}’ 신청 내역을 삭제할까요?`)) return;
     try {
@@ -203,24 +192,12 @@ export function ApplicationsManager() {
                     </p>
                     <p className="mt-1 text-[11px] text-gray-400">{sourceLabel[application.source]}</p>
                   </td>
-                  <td className="px-4 py-4">
-                    <select
-                      className={inputClass}
-                      value={application.status}
-                      disabled={!nextStatuses[application.status].length}
-                      onChange={(event) => void updateStatus(application, event.target.value as ApplicationStatus)}
-                      aria-label={`${application.applicantName} 신청 상태`}
+                  <td className="px-4 py-4 text-center">
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1.5 text-xs font-bold ${statusColors[application.status]}`}
                     >
-                      {statuses
-                        .filter(
-                          ([value]) => value === application.status || nextStatuses[application.status].includes(value),
-                        )
-                        .map(([value, label]) => (
-                          <option key={value} value={value}>
-                            {label}
-                          </option>
-                        ))}
-                    </select>
+                      {statuses.find(([value]) => value === application.status)?.[1] ?? application.status}
+                    </span>
                   </td>
                   <td className="px-4 py-4">
                     <div className="flex justify-center gap-1">
