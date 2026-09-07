@@ -1,4 +1,4 @@
-import { ArrowRight, CalendarDays, Clock3, Users } from "lucide-react";
+import { ArrowRight, CalendarDays, ChevronDown, Clock3, Users } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -15,6 +15,21 @@ function formatDate(date: string, withWeekday = false) {
   }).format(new Date(date.includes("T") ? date : `${date}T00:00:00+09:00`));
 }
 
+function getSeoulDateKey() {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+  const value = (type: Intl.DateTimeFormatPartTypes) => parts.find((part) => part.type === type)?.value ?? "";
+  return `${value("year")}-${value("month")}-${value("day")}`;
+}
+
+function getNextAvailableDate(activity: VolunteerActivity, today: string) {
+  return [...activity.availableDates].filter((date) => date >= today).sort()[0] ?? "";
+}
+
 export function ActionSection() {
   const { user } = useAuth();
   const [preview, setPreview] = useState<HomeActivityPreview>({ activities: [], recentTeams: [] });
@@ -22,6 +37,7 @@ export function ActionSection() {
   const [selected, setSelected] = useState<VolunteerActivity | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showAllActivities, setShowAllActivities] = useState(false);
 
   const loadApplications = useCallback(async () => {
     setApplications(await api<VolunteerApplication[]>("/applications/mine"));
@@ -41,6 +57,20 @@ export function ActionSection() {
   }, [loadApplications, user]);
 
   const showingRecentTeams = !loading && !error && preview.activities.length === 0 && preview.recentTeams.length > 0;
+  const today = getSeoulDateKey();
+  const currentMonthKey = today.slice(0, 7);
+  const currentMonth = Number(today.slice(5, 7));
+  const sortedActivities = [...preview.activities].sort((first, second) => {
+    const firstDate = getNextAvailableDate(first, today) || "9999-12-31";
+    const secondDate = getNextAvailableDate(second, today) || "9999-12-31";
+    return firstDate.localeCompare(secondDate) || first.displayOrder - second.displayOrder;
+  });
+  const currentMonthActivityCount = sortedActivities.filter(
+    (activity) =>
+      activity.isAcceptingApplications &&
+      activity.availableDates.some((date) => date >= today && date.startsWith(currentMonthKey)),
+  ).length;
+  const displayedActivities = showAllActivities ? sortedActivities : sortedActivities.slice(0, 3);
 
   return (
     <section id="action" className="scroll-mt-16 bg-brand-900 px-4 py-20 text-white md:px-8 md:py-24">
@@ -55,6 +85,11 @@ export function ActionSection() {
               ? "새로운 모집을 기다리는 동안 최근 현장을 만나보세요."
               : "받은 은혜를 흘려보낼 곳을 선택해 주세요."}
           </p>
+          {!loading && !error && (
+            <p className="flex justify-end mt-6 font-bold text-white">
+              {currentMonth}월 신청 가능한 봉사는 총 {currentMonthActivityCount}개입니다.
+            </p>
+          )}
         </div>
 
         {error && <p className="mt-8 rounded-md bg-red-950/40 p-3 text-sm text-red-100">{error}</p>}
@@ -64,36 +99,39 @@ export function ActionSection() {
           </p>
         )}
 
-        <div className="mt-10 space-y-3">
-          {preview.activities.map((activity) => (
-            <article
-              key={activity.id}
-              className="grid gap-4 rounded-lg border border-brand-700 bg-brand-800/60 p-5 md:grid-cols-[1fr_auto] md:items-center"
-            >
-              <div>
-                <p className="text-xs font-bold text-brand-300">{activity.team?.name}</p>
-                <h3 className="mt-1 text-lg font-bold">{activity.title}</h3>
-                <div className="mt-3 flex flex-wrap gap-4 text-xs text-brand-100">
-                  <span className="flex items-center gap-1.5">
-                    <CalendarDays size={14} />
-                    {activity.nextAvailableDate ? `${formatDate(activity.nextAvailableDate, true)}` : activity.schedule}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Users size={14} />
-                    {activity.capacity}
-                  </span>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelected(activity)}
-                className="flex h-11 items-center justify-center gap-2 rounded-md bg-white px-5 text-sm font-bold text-brand-900"
+        <div id="all-volunteer-activities" className="mt-3 space-y-3">
+          {displayedActivities.map((activity) => {
+            const nextAvailableDate = getNextAvailableDate(activity, today);
+            return (
+              <article
+                key={activity.id}
+                className="grid gap-4 rounded-lg border border-brand-700 bg-brand-800/60 p-5 md:grid-cols-[1fr_auto] md:items-center"
               >
-                상세보기 및 신청
-                <ArrowRight size={16} />
-              </button>
-            </article>
-          ))}
+                <div>
+                  <p className="text-xs font-bold text-brand-300">{activity.team?.name}</p>
+                  <h3 className="mt-1 text-lg font-bold">{activity.title}</h3>
+                  <div className="mt-3 flex flex-wrap gap-4 text-xs text-brand-100">
+                    <span className="flex items-center gap-1.5">
+                      <CalendarDays size={14} />
+                      {nextAvailableDate ? formatDate(nextAvailableDate, true) : activity.schedule}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Users size={14} />
+                      {activity.capacity}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelected(activity)}
+                  className="flex h-11 items-center justify-center gap-2 rounded-md bg-white px-5 text-sm font-bold text-brand-900"
+                >
+                  상세보기 및 신청
+                  <ArrowRight size={16} />
+                </button>
+              </article>
+            );
+          })}
 
           {showingRecentTeams &&
             preview.recentTeams.map(({ team, latestActivity }) => (
@@ -122,13 +160,22 @@ export function ActionSection() {
             ))}
         </div>
 
-        <a
-          href="/volunteer"
-          className="mx-auto mt-8 flex h-12 w-fit items-center justify-center gap-2 rounded-md border border-brand-400 px-6 font-bold text-white hover:bg-brand-800"
-        >
-          전체 봉사활동 보기
-          <ArrowRight size={18} />
-        </a>
+        {sortedActivities.length > 3 && (
+          <button
+            type="button"
+            onClick={() => setShowAllActivities((current) => !current)}
+            className="mx-auto mt-8 flex h-12 items-center justify-center gap-2 rounded-md border border-brand-400 px-6 font-bold text-white hover:bg-brand-800"
+            aria-expanded={showAllActivities}
+            aria-controls="all-volunteer-activities"
+          >
+            {showAllActivities ? "봉사활동 접기" : "전체 봉사활동 보기"}
+            <ChevronDown
+              size={18}
+              className={`transition-transform ${showAllActivities ? "rotate-180" : ""}`}
+              aria-hidden="true"
+            />
+          </button>
+        )}
       </div>
       {selected && (
         <ParticipationDialog
