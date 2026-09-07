@@ -1,7 +1,7 @@
 import { Search, UserRoundCheck, UserRoundX } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../api/client";
-import type { AdminMember, PageResult, Role, User } from "../../types/platform";
+import type { AdminMember, MinistryTeam, PageResult, Role, User } from "../../types/platform";
 import { Dialog } from "../common/Dialog";
 import { inputClass } from "../common/FormControls";
 import { Pagination } from "../common/Pagination";
@@ -10,6 +10,7 @@ const roleLabel: Record<Role, string> = { ADMIN: "관리자", AUTHORIZED_UPLOADE
 
 export function MembersManager() {
   const [users, setUsers] = useState<AdminMember[]>([]);
+  const [teams, setTeams] = useState<MinistryTeam[]>([]);
   const [selected, setSelected] = useState<AdminMember | null>(null);
   const [query, setQuery] = useState("");
   const [role, setRole] = useState("");
@@ -46,12 +47,33 @@ export function MembersManager() {
     return () => window.clearTimeout(timer);
   }, [load]);
 
-  const updateUser = async (id: string, update: Partial<Pick<User, "role" | "status">>) => {
+  useEffect(() => {
+    api<MinistryTeam[]>("/teams")
+      .then(setTeams)
+      .catch((caught) => setError(caught instanceof Error ? caught.message : "사역팀을 불러오지 못했습니다."));
+  }, []);
+
+  const updateUser = async (
+    id: string,
+    update: Partial<Pick<User, "role" | "status" | "ministryTeamId">>,
+  ) => {
     try {
       await api(`/admin/users/${id}`, { method: "PATCH", body: JSON.stringify(update) });
       await load();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "회원 정보를 변경하지 못했습니다.");
+    }
+  };
+
+  const reviewTeamChange = async (id: string, action: "APPROVE" | "REJECT") => {
+    try {
+      await api(`/admin/users/${id}/team-change-request`, {
+        method: "PATCH",
+        body: JSON.stringify({ action }),
+      });
+      await load();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "사역팀 변경 요청을 처리하지 못했습니다.");
     }
   };
 
@@ -114,7 +136,7 @@ export function MembersManager() {
               <tr>
                 <th className="px-5 py-3">이름</th>
                 <th className="px-4 py-3">연락처</th>
-                <th className="px-4 py-3">소속 팀</th>
+                <th className="w-52 px-4 py-3">소속 팀</th>
                 <th className="w-52 px-4 py-3">역할</th>
                 <th className="w-36 px-4 py-3">상태</th>
               </tr>
@@ -151,7 +173,51 @@ export function MembersManager() {
                     </div>
                   </td>
                   <td className="px-4 py-4">{member.phone || "미입력"}</td>
-                  <td className="px-4 py-4">{member.team?.name ?? "소속 없음"}</td>
+                  <td className="px-4 py-4">
+                    <select
+                      className={inputClass}
+                      value={member.ministryTeamId ?? ""}
+                      onClick={(event) => event.stopPropagation()}
+                      onChange={(event) =>
+                        void updateUser(member.id, { ministryTeamId: event.target.value || null })
+                      }
+                      aria-label={`${member.name || member.nickname} 소속 팀`}
+                    >
+                      <option value="">소속 없음</option>
+                      {teams.map((team) => (
+                        <option key={team.id} value={team.id}>
+                          {team.name}
+                        </option>
+                      ))}
+                    </select>
+                    {member.role === "USER" && member.requestedTeam && (
+                      <div className="mt-2 rounded-md bg-amber-50 p-2 text-xs text-amber-900">
+                        <p className="font-bold">{member.requestedTeam.name} 변경 요청</p>
+                        <div className="mt-2 flex gap-2">
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              void reviewTeamChange(member.id, "APPROVE");
+                            }}
+                            className="rounded bg-brand-700 px-2.5 py-1.5 font-bold text-white"
+                          >
+                            승인
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              void reviewTeamChange(member.id, "REJECT");
+                            }}
+                            className="rounded border border-amber-300 bg-white px-2.5 py-1.5 font-bold"
+                          >
+                            거절
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </td>
                   <td className="px-4 py-4">
                     <select
                       className={inputClass}
