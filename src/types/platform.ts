@@ -214,10 +214,14 @@ export type AdminTeamOverview = {
 };
 
 export type AdminStats = {
-  totalUsers: number;
+  cumulativeUsers: number;
   activeUsers: number;
+  suspendedUsers: number;
+  withdrawnUsers: number;
   totalApplications: number;
-  pendingApplications: number;
+  monthlyApplications: number;
+  completedApplications: number;
+  currentMonth: string;
   visibleNews: number;
   totalNews: number;
 };

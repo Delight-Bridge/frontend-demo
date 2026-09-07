@@ -1,4 +1,13 @@
-import { Activity, Download, Newspaper, UserCheck, Users } from "lucide-react";
+import {
+  Activity,
+  BadgeCheck,
+  CalendarCheck2,
+  Download,
+  UserCheck,
+  UserMinus,
+  UserRoundCheck,
+  Users,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "../../api/client";
 import type { AdminStats, VolunteerApplication } from "../../types/platform";
@@ -28,36 +37,40 @@ export function AdminDashboard({ onNavigate }: { onNavigate: (tab: "members" | "
       .catch((caught) => setError(caught instanceof Error ? caught.message : "통계를 불러오지 못했습니다."));
   }, []);
 
-  const metrics = [
+  const currentMonthLabel = Number((stats?.currentMonth ?? reportMonth).split("-")[1]);
+  const applicationMetrics = [
     {
-      label: "전체 회원",
-      value: stats?.totalUsers ?? 0,
-      hint: `활성 ${stats?.activeUsers ?? 0}명`,
-      icon: Users,
-      tab: "members" as const,
-    },
-    {
-      label: "봉사 신청",
+      label: "누적 봉사 신청",
       value: stats?.totalApplications ?? 0,
-      hint: `처리 대기 ${stats?.pendingApplications ?? 0}건`,
+      hint: "전체 신청 건수",
       icon: UserCheck,
       tab: "applications" as const,
     },
     {
-      label: "뉴스 콘텐츠",
-      value: stats?.totalNews ?? 0,
-      hint: `공개 ${stats?.visibleNews ?? 0}건`,
-      icon: Newspaper,
-      tab: "news" as const,
+      label: `${currentMonthLabel}월 봉사 신청`,
+      value: stats?.monthlyApplications ?? 0,
+      hint: `${stats?.currentMonth ?? reportMonth} 기준`,
+      icon: CalendarCheck2,
+      tab: "applications" as const,
+    },
+    {
+      label: "봉사 완료",
+      value: stats?.completedApplications ?? 0,
+      hint: "누적 완료 건수",
+      icon: BadgeCheck,
+      tab: "applications" as const,
     },
   ];
   const downloadReport = () => {
     const content = [
       `Delight Bridge ${reportMonth} 샘플 운영 보고서`,
       "",
-      `전체 회원: ${stats?.totalUsers ?? 0}명`,
-      `봉사 신청: ${stats?.totalApplications ?? 0}건`,
-      `공개 뉴스: ${stats?.visibleNews ?? 0}건`,
+      `누적 회원: ${stats?.cumulativeUsers ?? 0}명`,
+      `활성 회원: ${stats?.activeUsers ?? 0}명`,
+      `탈퇴 회원: ${stats?.withdrawnUsers ?? 0}명`,
+      `누적 봉사 신청: ${stats?.totalApplications ?? 0}건`,
+      `${stats?.currentMonth ?? reportMonth} 봉사 신청: ${stats?.monthlyApplications ?? 0}건`,
+      `봉사 완료: ${stats?.completedApplications ?? 0}건`,
       "",
       "프론트 데모에서 생성한 샘플 파일이며 실제 운영 데이터가 아닙니다.",
     ].join("\n");
@@ -102,8 +115,42 @@ export function AdminDashboard({ onNavigate }: { onNavigate: (tab: "members" | "
           </button>
         </div>
       </section>
-      <div className="grid gap-4 sm:grid-cols-3">
-        {metrics.map(({ label, value, hint, icon: Icon, tab }) => (
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <button
+          type="button"
+          onClick={() => onNavigate("members")}
+          className="group relative min-h-32 overflow-hidden rounded-md border bg-white p-5 text-left hover:border-brand-500 focus-visible:border-brand-500"
+          aria-label={`회원 현황, 누적 ${stats?.cumulativeUsers ?? 0}명, 활성 ${stats?.activeUsers ?? 0}명, 탈퇴 ${stats?.withdrawnUsers ?? 0}명`}
+        >
+          <span className="flex items-start justify-between transition-opacity group-hover:opacity-0 group-focus-visible:opacity-0">
+            <span>
+              <span className="block text-sm font-medium text-gray-500">회원</span>
+              <strong className="mt-3 block text-3xl text-gray-950">{stats?.cumulativeUsers ?? 0}</strong>
+              <span className="mt-2 block text-xs text-gray-500">마우스를 올려 상세 보기</span>
+            </span>
+            <span className="grid h-10 w-10 place-items-center rounded-md bg-brand-50 text-brand-700">
+              <Users size={20} />
+            </span>
+          </span>
+          <span className="absolute inset-0 grid grid-cols-3 items-center gap-1 bg-brand-900 px-3 text-center text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+            <span>
+              <Users className="mx-auto text-brand-200" size={18} />
+              <strong className="mt-1 block text-xl">{stats?.cumulativeUsers ?? 0}</strong>
+              <span className="block text-[11px] text-brand-100">누적 회원</span>
+            </span>
+            <span className="border-x border-brand-700 px-1">
+              <UserRoundCheck className="mx-auto text-brand-200" size={18} />
+              <strong className="mt-1 block text-xl">{stats?.activeUsers ?? 0}</strong>
+              <span className="block text-[11px] text-brand-100">활성 회원</span>
+            </span>
+            <span>
+              <UserMinus className="mx-auto text-brand-200" size={18} />
+              <strong className="mt-1 block text-xl">{stats?.withdrawnUsers ?? 0}</strong>
+              <span className="block text-[11px] text-brand-100">탈퇴 회원</span>
+            </span>
+          </span>
+        </button>
+        {applicationMetrics.map(({ label, value, hint, icon: Icon, tab }) => (
           <button
             key={label}
             onClick={() => onNavigate(tab)}

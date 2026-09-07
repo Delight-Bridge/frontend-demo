@@ -19,6 +19,7 @@ export class ApiError extends Error {
 }
 const db = {
   users: structuredClone(demoUsers),
+  withdrawnUsers: 0,
   teams: structuredClone(demoTeams),
   activities: structuredClone(demoActivities),
   applications: structuredClone(demoApplications),
@@ -175,6 +176,7 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     if (method === "DELETE") {
       if (user.role === "ADMIN") throw new ApiError(403, "관리자 계정은 회원 탈퇴할 수 없습니다.");
       remove(db.users, user.id);
+      db.withdrawnUsers += 1;
       delete emailPasswords[user.id];
       sessionStorage.removeItem(sessionKey);
       localStorage.removeItem(sessionKey);
@@ -521,11 +523,23 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
 
   if (route === "/admin/stats") {
     requireAdmin();
+    const monthFormatter = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Seoul",
+      year: "numeric",
+      month: "2-digit",
+    });
+    const currentMonth = monthFormatter.format(new Date());
     return {
-      totalUsers: db.users.length,
+      cumulativeUsers: db.users.length + db.withdrawnUsers,
       activeUsers: db.users.filter((item) => item.status === "ACTIVE").length,
+      suspendedUsers: db.users.filter((item) => item.status === "SUSPENDED").length,
+      withdrawnUsers: db.withdrawnUsers,
       totalApplications: db.applications.length,
-      pendingApplications: db.applications.filter((item) => item.status === "SUBMITTED").length,
+      monthlyApplications: db.applications.filter(
+        (item) => monthFormatter.format(new Date(item.appliedAt)) === currentMonth,
+      ).length,
+      completedApplications: db.applications.filter((item) => item.status === "COMPLETED").length,
+      currentMonth,
       visibleNews: db.news.filter((item) => item.isVisible).length,
       totalNews: db.news.length,
     } as T;
