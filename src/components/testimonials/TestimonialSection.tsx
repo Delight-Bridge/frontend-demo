@@ -63,7 +63,12 @@ export function TestimonialSection() {
     <section id="testimonies" className="scroll-mt-16 bg-gray-50 px-4 py-20 md:px-8 md:py-24">
       <div className="mx-auto max-w-6xl">
         <div className="mb-10 flex items-end justify-between gap-4">
-          <SectionHeading title="회복 간증" description="나눔을 통해 경험한 은혜의 이야기" align="left" />
+          <SectionHeading
+            title="회복 간증"
+            description="나눔을 통해 경험한 은혜의 이야기"
+            href="/testimony"
+            align="left"
+          />
           <button
             onClick={write}
             className="flex h-10 shrink-0 items-center gap-2 rounded-md bg-brand-600 px-3 text-sm font-bold text-white"
