@@ -4,7 +4,6 @@ import {
   ClipboardList,
   LayoutDashboard,
   LogIn,
-  LogOut,
   Newspaper,
   Settings,
   UserRound,
@@ -20,6 +19,7 @@ import { NewsManager } from "./NewsManager";
 import { TeamsManager } from "./TeamsManager";
 import { ProfilePage } from "../mypage/ProfilePage";
 import { PageBreadcrumb } from "../common/PageBreadcrumb";
+import { SiteHeader } from "../layout/SiteHeader";
 
 type AdminTab = "dashboard" | "profile" | "members" | "applications" | "news" | "teams";
 const tabs: Array<{ id: AdminTab; label: string; icon: typeof LayoutDashboard }> = [
@@ -33,7 +33,7 @@ const tabs: Array<{ id: AdminTab; label: string; icon: typeof LayoutDashboard }>
 ];
 
 export function AdminPage() {
-  const { user, loading, openLogin, logout } = useAuth();
+  const { user, loading, openLogin } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const requestedTab = location.pathname.split("/")[2] || "dashboard";
@@ -83,37 +83,7 @@ export function AdminPage() {
   const currentLabel = tabs.find((item) => item.id === tab)?.label;
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900">
-      <header className="sticky top-0 z-40 border-b bg-white">
-        <div className="mx-auto flex h-16 max-w-[1500px] items-center justify-between px-4 md:px-6">
-          <div className="flex items-center gap-4">
-            <a href="/" className="grid h-9 w-9 place-items-center text-gray-500" aria-label="메인으로 돌아가기">
-              <ArrowLeft size={20} />
-            </a>
-            <div>
-              <p className="font-serif font-bold">Delight Bridge Admin</p>
-              <p className="text-[11px] text-gray-500">운영 관리 콘솔</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setTab("profile")}
-              className="hidden rounded-md px-2 py-1 text-right hover:bg-gray-100 sm:block"
-              aria-label={`${user.name || user.nickname} 내 정보로 이동`}
-            >
-              <span className="block text-sm font-bold">{user.name || user.nickname}</span>
-              <span className="block text-[11px] text-gray-500">{user.nickname}</span>
-            </button>
-            <button
-              onClick={() => void logout()}
-              className="grid h-9 w-9 place-items-center text-gray-500"
-              aria-label="로그아웃"
-            >
-              <LogOut size={18} />
-            </button>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
       <div className="mx-auto grid max-w-[1500px] md:grid-cols-[220px_1fr]">
         <aside className="min-w-0 max-w-full border-b bg-white md:min-h-[calc(100vh-4rem)] md:border-b-0 md:border-r">
           <nav
