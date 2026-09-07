@@ -91,7 +91,7 @@ const galleryForViewer = (post: GalleryPost) => {
     likedByMe: Boolean(mutable.likedUserIds?.includes(currentUser()?.id ?? "")),
     canManage:
       currentUser()?.role === "ADMIN" ||
-      (currentUser()?.role === "AUTHORIZED_UPLOADER" && post.ministryTeamId === "team-1"),
+      (currentUser()?.role === "AUTHORIZED_UPLOADER" && post.ministryTeamId === currentUser()?.ministryTeamId),
     comments: post.comments.map((comment) => ({
       ...comment,
       canManage: Boolean(currentUser() && (currentUser()?.role === "ADMIN" || currentUser()?.id === comment.authorId)),
@@ -172,6 +172,14 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
   }
   if (route === "/me") {
     const user = requireUser();
+    if (method === "DELETE") {
+      if (user.role === "ADMIN") throw new ApiError(403, "관리자 계정은 회원 탈퇴할 수 없습니다.");
+      remove(db.users, user.id);
+      delete emailPasswords[user.id];
+      sessionStorage.removeItem(sessionKey);
+      localStorage.removeItem(sessionKey);
+      return undefined as T;
+    }
     if (method === "PATCH") {
       const { privacyConsent, ...values } = body;
       if (needsOnboarding() && (!values.name?.trim() || !values.phone?.trim() || privacyConsent !== true))
@@ -186,8 +194,24 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     return {
       user,
       needsOnboarding: needsOnboarding(),
-      team: user.role === "AUTHORIZED_UPLOADER" ? (db.teams.find((item) => item.id === "team-1") ?? null) : null,
+      team: user.ministryTeamId ? (db.teams.find((item) => item.id === user.ministryTeamId) ?? null) : null,
+      requestedTeam: user.requestedMinistryTeamId
+        ? (db.teams.find((item) => item.id === user.requestedMinistryTeamId) ?? null)
+        : null,
     } as T;
+  }
+
+  if (route === "/me/team-change-request" && method === "POST") {
+    const user = requireUser();
+    if (user.role !== "USER") throw new ApiError(403, "일반 회원만 소속 사역팀 변경을 신청할 수 있습니다.");
+    const teamId = String(body.ministryTeamId ?? "");
+    if (!db.teams.some((item) => item.id === teamId && item.isVisible))
+      throw new ApiError(404, "변경할 사역팀을 찾을 수 없습니다.");
+    if (teamId === user.ministryTeamId) throw new ApiError(400, "현재 소속된 사역팀입니다.");
+    return update(db.users, user.id, {
+      requestedMinistryTeamId: teamId,
+      teamChangeRequestedAt: new Date().toISOString(),
+    }) as T;
   }
 
   if (route === "/news" && method === "GET")
@@ -227,13 +251,13 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
   if (route.startsWith("/teams/") && method === "PATCH") {
     const user = requireUser();
     const teamId = route.split("/")[2];
-    if (user.role !== "ADMIN" && !(user.role === "AUTHORIZED_UPLOADER" && teamId === "team-1"))
+    if (user.role !== "ADMIN" && !(user.role === "AUTHORIZED_UPLOADER" && teamId === user.ministryTeamId))
       throw new ApiError(403, "담당 팀 정보만 수정할 수 있습니다.");
     return update(db.teams, teamId, body) as T;
   }
   if (route === "/activities/home-preview")
     return {
-      activities: db.activities.filter((item) => item.isVisible && item.isAcceptingApplications).slice(0, 3),
+      activities: db.activities.filter((item) => item.isVisible && item.isAcceptingApplications),
       recentTeams: [],
     } as T;
   if (route === "/activities" && method === "GET") {
@@ -241,14 +265,18 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     const viewer = currentUser();
     const includeHidden =
       url.searchParams.get("includeHidden") === "true" &&
-      (viewer?.role === "ADMIN" || (viewer?.role === "AUTHORIZED_UPLOADER" && teamId === "team-1"));
+      (viewer?.role === "ADMIN" ||
+        (viewer?.role === "AUTHORIZED_UPLOADER" && teamId === viewer.ministryTeamId));
     return db.activities.filter(
       (item) => (!teamId || item.ministryTeamId === teamId) && (item.isVisible || includeHidden),
     ) as T;
   }
   if (route === "/activities" && method === "POST") {
     const user = requireUser();
-    if (user.role !== "ADMIN" && !(user.role === "AUTHORIZED_UPLOADER" && body.ministryTeamId === "team-1"))
+    if (
+      user.role !== "ADMIN" &&
+      !(user.role === "AUTHORIZED_UPLOADER" && body.ministryTeamId === user.ministryTeamId)
+    )
       throw new ApiError(403, "담당 팀의 봉사활동만 등록할 수 있습니다.");
     const dates = body.availableDates ?? [];
     const item = {
@@ -267,10 +295,13 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     const itemId = route.split("/")[2];
     const activity = db.activities.find((item) => item.id === itemId);
     if (!activity) throw new ApiError(404, "봉사활동을 찾을 수 없습니다.");
-    if (user.role !== "ADMIN" && !(user.role === "AUTHORIZED_UPLOADER" && activity.ministryTeamId === "team-1"))
+    if (
+      user.role !== "ADMIN" &&
+      !(user.role === "AUTHORIZED_UPLOADER" && activity.ministryTeamId === user.ministryTeamId)
+    )
       throw new ApiError(403, "담당 팀의 봉사활동만 관리할 수 있습니다.");
     if (method === "PATCH") {
-      if (user.role === "AUTHORIZED_UPLOADER" && body.ministryTeamId !== "team-1")
+      if (user.role === "AUTHORIZED_UPLOADER" && body.ministryTeamId !== user.ministryTeamId)
         throw new ApiError(403, "봉사활동을 다른 팀으로 변경할 수 없습니다.");
       const item = update(db.activities, itemId, body);
       item.team = teamFor(item.ministryTeamId);
@@ -494,22 +525,18 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
       totalUsers: db.users.length,
       activeUsers: db.users.filter((item) => item.status === "ACTIVE").length,
       totalApplications: db.applications.length,
-      pendingApplications: db.applications.filter((item) => ["SUBMITTED", "ADMIN_CONFIRMED"].includes(item.status))
-        .length,
+      pendingApplications: db.applications.filter((item) => item.status === "SUBMITTED").length,
       visibleNews: db.news.filter((item) => item.isVisible).length,
       totalNews: db.news.length,
     } as T;
   }
   if (route === "/admin/users" && method === "GET") {
     requireAdmin();
-    let items = db.users.map((item) => {
-      const assignedApplication = db.applications.find(
-        (application) =>
-          application.userId === item.id && ["HANDED_TO_LEADER", "COMPLETED"].includes(application.status),
-      );
-      const teamId = item.role === "AUTHORIZED_UPLOADER" ? "team-1" : assignedApplication?.ministryTeamId;
-      return { ...item, team: teamId ? teamFor(teamId) : null };
-    });
+    let items = db.users.map((item) => ({
+      ...item,
+      team: item.ministryTeamId ? teamFor(item.ministryTeamId) : null,
+      requestedTeam: item.requestedMinistryTeamId ? teamFor(item.requestedMinistryTeamId) : null,
+    }));
     const q = url.searchParams.get("q")?.toLowerCase();
     if (q)
       items = items.filter(
@@ -524,9 +551,27 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     if (url.searchParams.get("status")) items = items.filter((item) => item.status === url.searchParams.get("status"));
     return paginate(items, url) as T;
   }
-  if (route.startsWith("/admin/users/") && method === "PATCH") {
+  const teamChangeRequestMatch = route.match(/^\/admin\/users\/([^/]+)\/team-change-request$/);
+  if (teamChangeRequestMatch && method === "PATCH") {
     requireAdmin();
-    return update(db.users, route.split("/")[3], body) as T;
+    const user = db.users.find((item) => item.id === teamChangeRequestMatch[1]);
+    if (!user) throw new ApiError(404, "회원을 찾을 수 없습니다.");
+    if (!user.requestedMinistryTeamId) throw new ApiError(400, "처리할 팀 변경 요청이 없습니다.");
+    const approve = body.action === "APPROVE";
+    return update(db.users, user.id, {
+      ministryTeamId: approve ? user.requestedMinistryTeamId : user.ministryTeamId,
+      requestedMinistryTeamId: null,
+      teamChangeRequestedAt: "",
+    }) as T;
+  }
+  if (/^\/admin\/users\/[^/]+$/.test(route) && method === "PATCH") {
+    requireAdmin();
+    const values = { ...body };
+    if (Object.prototype.hasOwnProperty.call(values, "ministryTeamId")) {
+      values.requestedMinistryTeamId = null;
+      values.teamChangeRequestedAt = "";
+    }
+    return update(db.users, route.split("/")[3], values) as T;
   }
   if (route === "/admin/applications" && method === "GET") {
     requireAdmin();
@@ -594,36 +639,81 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     const team = db.teams.find((item) => item.id === overviewMatch[1]);
     return {
       team,
-      memberships:
-        team?.id === "team-1"
-          ? [
-              {
-                id: "membership-1",
-                userId: "demo-uploader",
-                ministryTeamId: "team-1",
-                membershipRole: "LEADER",
-                status: "ACTIVE",
-                joinedAt: new Date().toISOString(),
-                leftAt: "",
-                user: db.users[1],
-              },
-            ]
-          : [],
-      eligibleUsers: db.users.filter((item) => item.role === "USER"),
+      memberships: db.users
+        .filter((item) => item.ministryTeamId === team?.id)
+        .map((user) => ({
+          id: `membership-${user.id}`,
+          userId: user.id,
+          ministryTeamId: team?.id ?? "",
+          membershipRole: user.role === "AUTHORIZED_UPLOADER" ? "LEADER" : "MEMBER",
+          status: "ACTIVE",
+          joinedAt: user.updatedAt,
+          leftAt: "",
+          user,
+        })),
+      eligibleUsers: db.users.filter((item) => item.role !== "ADMIN" && item.ministryTeamId !== team?.id),
       posts: db.gallery.filter((item) => item.ministryTeamId === team?.id),
     } as T;
   }
-  if (/^\/admin\/teams\/[^/]+\/members/.test(route)) {
+  const teamMemberMatch = route.match(/^\/admin\/teams\/([^/]+)\/members(?:\/([^/]+))?$/);
+  if (teamMemberMatch) {
     requireAdmin();
+    const teamId = teamMemberMatch[1];
+    const userId = teamMemberMatch[2] ?? body.userId;
+    const user = db.users.find((item) => item.id === userId);
+    if (!db.teams.some((item) => item.id === teamId)) throw new ApiError(404, "사역팀을 찾을 수 없습니다.");
+    if (!user) throw new ApiError(404, "회원을 찾을 수 없습니다.");
+    if (method === "POST")
+      return update(db.users, user.id, {
+        ministryTeamId: teamId,
+        requestedMinistryTeamId: null,
+        teamChangeRequestedAt: "",
+      }) as T;
+    if (method === "DELETE" && user.ministryTeamId === teamId)
+      return update(db.users, user.id, {
+        ministryTeamId: null,
+        requestedMinistryTeamId: null,
+        teamChangeRequestedAt: "",
+      }) as T;
     return undefined as T;
+  }
+  const uploaderApplicationMatch = route.match(/^\/uploader\/applications\/([^/]+)$/);
+  if (uploaderApplicationMatch && method === "PATCH") {
+    const user = requireUser();
+    if (user.role !== "AUTHORIZED_UPLOADER") throw new ApiError(403, "팀장 데모 계정이 필요합니다.");
+    const application = db.applications.find((item) => item.id === uploaderApplicationMatch[1]);
+    if (!application || application.ministryTeamId !== user.ministryTeamId)
+      throw new ApiError(404, "담당 팀의 신청 내역을 찾을 수 없습니다.");
+    const nextStatus = body.status as VolunteerApplication["status"];
+    const allowed =
+      (application.status === "SUBMITTED" && nextStatus === "LEADER_CONFIRMED") ||
+      (application.status === "LEADER_CONFIRMED" && nextStatus === "COMPLETED");
+    if (!allowed) throw new ApiError(400, "변경할 수 없는 신청 상태입니다.");
+    return update(db.applications, application.id, {
+      status: nextStatus,
+      canCancel: false,
+      canEdit: false,
+      history: [
+        ...(application.history ?? []),
+        {
+          id: newId("history"),
+          applicationId: application.id,
+          fromStatus: application.status,
+          toStatus: nextStatus,
+          changedBy: user.id,
+          changedByName: user.name || user.nickname,
+          changedAt: new Date().toISOString(),
+        },
+      ],
+    }) as T;
   }
   if (route === "/uploader/applications") {
     const user = requireUser();
     if (!["ADMIN", "AUTHORIZED_UPLOADER"].includes(user.role)) throw new ApiError(403, "팀장 데모 계정이 필요합니다.");
     const items = db.applications.filter(
       (item) =>
-        ["HANDED_TO_LEADER", "COMPLETED"].includes(item.status) &&
-        (user.role === "ADMIN" || item.ministryTeamId === "team-1"),
+        ["SUBMITTED", "LEADER_CONFIRMED", "COMPLETED"].includes(item.status) &&
+        (user.role === "ADMIN" || item.ministryTeamId === user.ministryTeamId),
     );
     return paginate(items, url) as T;
   }

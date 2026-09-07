@@ -12,16 +12,14 @@ function toLocalDateTime(value: string) {
 
 const statusOptions: Array<[ApplicationStatus, string]> = [
   ["SUBMITTED", "접수"],
-  ["ADMIN_CONFIRMED", "관리자 확정"],
-  ["HANDED_TO_LEADER", "팀장 전달"],
+  ["LEADER_CONFIRMED", "팀장 승인"],
   ["REJECTED", "참여 불가"],
   ["CANCELLED", "취소"],
   ["COMPLETED", "참여 완료"],
 ];
 const nextStatuses: Record<ApplicationStatus, ApplicationStatus[]> = {
-  SUBMITTED: ["ADMIN_CONFIRMED", "REJECTED", "CANCELLED"],
-  ADMIN_CONFIRMED: ["HANDED_TO_LEADER", "REJECTED", "CANCELLED"],
-  HANDED_TO_LEADER: ["COMPLETED"],
+  SUBMITTED: ["REJECTED", "CANCELLED"],
+  LEADER_CONFIRMED: ["COMPLETED"],
   REJECTED: [],
   CANCELLED: [],
   COMPLETED: [],

@@ -11,6 +11,9 @@ export type User = {
   profileImageUrl: string;
   privacyAgreedAt: string;
   onboardingCompletedAt: string;
+  ministryTeamId: string | null;
+  requestedMinistryTeamId: string | null;
+  teamChangeRequestedAt: string;
   role: Role;
   status: "ACTIVE" | "SUSPENDED";
   createdAt: string;
@@ -59,6 +62,7 @@ export type MinistryTeam = {
 
 export type AdminMember = User & {
   team: Pick<MinistryTeam, "id" | "name"> | null;
+  requestedTeam: Pick<MinistryTeam, "id" | "name"> | null;
 };
 
 export type GalleryComment = {
@@ -152,7 +156,7 @@ export type TestimonyPost = {
 };
 
 export type ApplicationStatus =
-  "SUBMITTED" | "ADMIN_CONFIRMED" | "HANDED_TO_LEADER" | "REJECTED" | "CANCELLED" | "COMPLETED";
+  "SUBMITTED" | "LEADER_CONFIRMED" | "REJECTED" | "CANCELLED" | "COMPLETED";
 
 export type VolunteerApplication = {
   id: string;

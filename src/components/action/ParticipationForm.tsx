@@ -46,7 +46,7 @@ export function ParticipationForm({
         applications
           .filter(
             (item) =>
-              ["SUBMITTED", "ADMIN_CONFIRMED", "HANDED_TO_LEADER"].includes(item.status) &&
+              ["SUBMITTED", "LEADER_CONFIRMED"].includes(item.status) &&
               item.activityId === activity.id,
           )
           .map((item) => item.participationDate || todayInSeoul()),
@@ -79,8 +79,8 @@ export function ParticipationForm({
       <div className="p-6 text-center">
         <CheckCircle2 className="mx-auto text-emerald-600" size={44} />
         <h3 className="mt-4 text-xl font-bold">신청이 접수되었습니다</h3>
-        <p className="mt-2 text-sm leading-6 text-gray-600">
-          관리자 확정 후 담당 팀장에게 전달됩니다. 확정 전까지는 마이페이지에서 신청을 수정하거나 취소할 수 있습니다.
+        <p className="mt-2 text-sm leading-6 text-red-600">
+          ※ 담당 팀장에게 신청 메일이 전달되었습니다. 확정 전까지는 마이페이지에서 신청을 수정하거나 취소할 수 있습니다.
         </p>
       </div>
     );

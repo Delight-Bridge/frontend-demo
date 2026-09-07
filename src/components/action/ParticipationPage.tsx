@@ -10,8 +10,7 @@ import { PageBreadcrumb } from "../common/PageBreadcrumb";
 
 const statusLabel = {
   SUBMITTED: "접수",
-  ADMIN_CONFIRMED: "관리자 확정",
-  HANDED_TO_LEADER: "팀장 전달",
+  LEADER_CONFIRMED: "팀장 승인",
   REJECTED: "거절",
   CANCELLED: "취소",
   COMPLETED: "참여 완료",

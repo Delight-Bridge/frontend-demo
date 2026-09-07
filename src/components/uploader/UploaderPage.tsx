@@ -70,7 +70,7 @@ export function UploaderPage() {
         <div className="mx-auto max-w-5xl">
           <p className="text-xs font-bold tracking-widest text-brand-700">TEAM LEADER</p>
           <h1 className="mt-2 text-3xl font-bold">담당 팀 신청자</h1>
-          <p className="mt-3 text-sm text-gray-500">관리자가 팀장에게 전달한 신청만 표시됩니다.</p>
+          <p className="mt-3 text-sm text-gray-500">담당 팀의 승인 대기 및 승인 완료 신청이 표시됩니다.</p>
           {error && (
             <p role="alert" className="mt-5 rounded-md bg-red-50 p-3 text-sm text-red-700">
               {error}
@@ -87,7 +87,11 @@ export function UploaderPage() {
                     </h2>
                   </div>
                   <span className="rounded-full bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700">
-                    {application.status === "COMPLETED" ? "참여 완료" : "팀장 전달"}
+                    {application.status === "COMPLETED"
+                      ? "참여 완료"
+                      : application.status === "LEADER_CONFIRMED"
+                        ? "팀장 승인"
+                        : "승인 대기"}
                   </span>
                 </div>
                 <div className="mt-4 grid gap-2 text-sm text-gray-600 sm:grid-cols-2">

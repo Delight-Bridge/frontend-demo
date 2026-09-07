@@ -1,4 +1,4 @@
-import { CalendarDays, ClipboardList, Pencil, XCircle } from "lucide-react";
+import { BadgeCheck, CalendarDays, CheckCircle2, ClipboardList, Clock3, Pencil, XCircle } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../api/client";
 import type { ApplicationStatus, VolunteerApplication } from "../../types/platform";
@@ -6,16 +6,14 @@ import { ApplicationEditDialog } from "./ApplicationEditDialog";
 
 const labels: Record<ApplicationStatus, string> = {
   SUBMITTED: "접수",
-  ADMIN_CONFIRMED: "관리자 확정",
-  HANDED_TO_LEADER: "팀장 전달",
+  LEADER_CONFIRMED: "팀장 승인",
   REJECTED: "거절",
   CANCELLED: "취소",
   COMPLETED: "참여 완료",
 };
 const colors: Record<ApplicationStatus, string> = {
   SUBMITTED: "bg-blue-50 text-blue-700",
-  ADMIN_CONFIRMED: "bg-amber-50 text-amber-700",
-  HANDED_TO_LEADER: "bg-violet-50 text-violet-700",
+  LEADER_CONFIRMED: "bg-amber-50 text-amber-700",
   REJECTED: "bg-red-50 text-red-700",
   CANCELLED: "bg-gray-100 text-gray-500",
   COMPLETED: "bg-emerald-50 text-emerald-700",
@@ -49,6 +47,38 @@ export function MyActivitiesPage() {
       setError(caught instanceof Error ? caught.message : "신청을 취소하지 못했습니다.");
     }
   };
+  const pendingCount = applications.filter((application) => application.status === "SUBMITTED").length;
+  const confirmedCount = applications.filter((application) => application.status === "LEADER_CONFIRMED").length;
+  const completedCount = applications.filter((application) => application.status === "COMPLETED").length;
+  const closedCount = applications.filter((application) =>
+    ["REJECTED", "CANCELLED"].includes(application.status),
+  ).length;
+  const processSummary = [
+    {
+      label: "신청 대기 중",
+      count: pendingCount,
+      description: "팀장 승인을 기다리고 있어요",
+      icon: Clock3,
+      className: "border-blue-200 bg-blue-50 text-blue-800",
+      iconClassName: "bg-blue-100 text-blue-700",
+    },
+    {
+      label: "신청 완료",
+      count: confirmedCount,
+      description: "참여가 확정된 봉사예요",
+      icon: CheckCircle2,
+      className: "border-violet-200 bg-violet-50 text-violet-800",
+      iconClassName: "bg-violet-100 text-violet-700",
+    },
+    {
+      label: "봉사 완료",
+      count: completedCount,
+      description: "참여를 마친 봉사예요",
+      icon: BadgeCheck,
+      className: "border-emerald-200 bg-emerald-50 text-emerald-800",
+      iconClassName: "bg-emerald-100 text-emerald-700",
+    },
+  ];
   if (loading)
     return (
       <div className="rounded-lg border bg-white p-8 text-center text-sm text-gray-500">
@@ -61,6 +91,31 @@ export function MyActivitiesPage() {
         <h2 className="text-xl font-bold">활동 내역</h2>
         <p className="mt-1 text-xs text-gray-500">신청 상태와 완료된 참여 이력을 확인합니다.</p>
       </div>
+      <section aria-label="봉사 신청 프로세스 현황">
+        <div className="grid gap-3 sm:grid-cols-3">
+          {processSummary.map((item) => {
+            const Icon = item.icon;
+            return (
+              <article key={item.label} className={`rounded-lg border p-4 ${item.className}`}>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-2xl font-black">
+                      {item.count}
+                      <span className="ml-0.5 text-sm font-bold">건</span>
+                    </p>
+                    <h3 className="mt-1 font-bold">{item.label}</h3>
+                  </div>
+                  <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-full ${item.iconClassName}`}>
+                    <Icon size={20} aria-hidden="true" />
+                  </span>
+                </div>
+                <p className="mt-3 text-xs opacity-75">{item.description}</p>
+              </article>
+            );
+          })}
+        </div>
+        {closedCount > 0 && <p className="mt-2 text-right text-xs text-gray-500">취소·거절된 신청 {closedCount}건</p>}
+      </section>
       {error && (
         <p role="alert" className="rounded-md bg-red-50 p-3 text-sm text-red-700">
           {error}
@@ -102,13 +157,11 @@ export function MyActivitiesPage() {
                     <XCircle size={16} />
                     신청 취소
                   </button>
-                  <p className="w-full text-xs text-gray-500">
-                    관리자 확정 전까지만 직접 수정하거나 취소할 수 있습니다.
-                  </p>
+                  <p className="w-full text-xs text-gray-500">팀장 승인 전까지만 직접 수정하거나 취소할 수 있습니다.</p>
                 </div>
-              ) : ["ADMIN_CONFIRMED", "HANDED_TO_LEADER"].includes(application.status) ? (
+              ) : application.status === "LEADER_CONFIRMED" ? (
                 <p className="mt-4 border-t pt-4 text-xs text-gray-500">
-                  변경이나 취소가 필요하면 관리자에게 문의해 주세요.
+                  변경이나 취소가 필요하면 팀장에게 문의해 주세요.
                 </p>
               ) : null}
             </article>

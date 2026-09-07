@@ -8,9 +8,8 @@ import { Pagination } from "../common/Pagination";
 
 const pageSize = 20;
 const statusLabels: Record<VolunteerApplication["status"], string> = {
-  SUBMITTED: "신청 완료",
-  ADMIN_CONFIRMED: "관리자 확인",
-  HANDED_TO_LEADER: "팀장 전달",
+  SUBMITTED: "승인 대기",
+  LEADER_CONFIRMED: "팀장 승인",
   REJECTED: "신청 반려",
   CANCELLED: "신청 취소",
   COMPLETED: "참여 완료",
@@ -59,13 +58,26 @@ export function TeamApplicantsPage() {
     }
   };
 
+  const updateStatus = async (application: VolunteerApplication, status: "LEADER_CONFIRMED" | "COMPLETED") => {
+    try {
+      const updated = await api<VolunteerApplication>(`/uploader/applications/${application.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ status }),
+      });
+      setApplications((current) => current.map((item) => (item.id === updated.id ? updated : item)));
+      setError("");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "신청 상태를 변경하지 못했습니다.");
+    }
+  };
+
   if (user?.role !== "AUTHORIZED_UPLOADER") return <Navigate to="/mypage/profile" replace />;
 
   return (
     <div className="rounded-lg border bg-white p-5 md:p-7">
       <p className="text-xs font-bold tracking-widest text-brand-700">TEAM APPLICANTS</p>
       <h2 className="mt-2 text-2xl font-bold text-gray-950">{team?.name ?? "담당 팀"} 신청자 관리</h2>
-      <p className="mt-2 text-sm text-gray-500">관리자가 담당 팀으로 전달한 신청자와 참여 정보를 확인할 수 있습니다.</p>
+      <p className="mt-2 text-sm text-gray-500">담당 팀의 신청자를 확인하고 참여를 승인할 수 있습니다.</p>
       {error && (
         <p role="alert" className="mt-5 rounded-md bg-red-50 p-3 text-sm text-red-700">
           {error}
@@ -99,6 +111,26 @@ export function TeamApplicantsPage() {
                     <span className="inline-flex h-7 items-center justify-center rounded-full bg-violet-50 px-3 text-xs font-bold leading-none text-violet-700">
                       {statusLabels[application.status]}
                     </span>
+                    {application.status === "SUBMITTED" && (
+                      <button
+                        type="button"
+                        onClick={() => void updateStatus(application, "LEADER_CONFIRMED")}
+                        className="mx-auto mt-2 flex h-9 items-center justify-center gap-1.5 rounded-md bg-brand-700 px-3 text-xs font-bold text-white"
+                      >
+                        <Check size={14} />
+                        팀장 승인
+                      </button>
+                    )}
+                    {application.status === "LEADER_CONFIRMED" && (
+                      <button
+                        type="button"
+                        onClick={() => void updateStatus(application, "COMPLETED")}
+                        className="mx-auto mt-2 flex h-9 items-center justify-center gap-1.5 rounded-md border border-emerald-300 bg-emerald-50 px-3 text-xs font-bold text-emerald-700"
+                      >
+                        <Check size={14} />
+                        봉사 완료
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -106,7 +138,7 @@ export function TeamApplicantsPage() {
                 <tr>
                   <td colSpan={5} className="h-56 text-center text-sm text-gray-500">
                     <ClipboardList className="mx-auto mb-3 text-gray-300" />
-                    전달받은 신청자가 없습니다.
+                    담당 팀의 신청자가 없습니다.
                   </td>
                 </tr>
               )}

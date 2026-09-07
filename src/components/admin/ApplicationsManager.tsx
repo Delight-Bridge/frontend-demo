@@ -1,4 +1,4 @@
-import { Pencil, Plus, Search, Send, Trash2 } from "lucide-react";
+import { Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../api/client";
 import type { ApplicationStatus, MinistryTeam, PageResult, User, VolunteerApplication } from "../../types/platform";
@@ -11,16 +11,14 @@ const pageSize = 20;
 
 const statuses: Array<[ApplicationStatus, string]> = [
   ["SUBMITTED", "접수"],
-  ["ADMIN_CONFIRMED", "관리자 확정"],
-  ["HANDED_TO_LEADER", "팀장 전달"],
+  ["LEADER_CONFIRMED", "팀장 승인"],
   ["REJECTED", "참여 불가"],
   ["CANCELLED", "취소"],
   ["COMPLETED", "참여 완료"],
 ];
 const nextStatuses: Record<ApplicationStatus, ApplicationStatus[]> = {
-  SUBMITTED: ["ADMIN_CONFIRMED", "REJECTED", "CANCELLED"],
-  ADMIN_CONFIRMED: ["HANDED_TO_LEADER", "REJECTED", "CANCELLED"],
-  HANDED_TO_LEADER: ["COMPLETED"],
+  SUBMITTED: ["REJECTED", "CANCELLED"],
+  LEADER_CONFIRMED: ["COMPLETED"],
   REJECTED: [],
   CANCELLED: [],
   COMPLETED: [],
@@ -215,9 +213,7 @@ export function ApplicationsManager() {
                     >
                       {statuses
                         .filter(
-                          ([value]) =>
-                            value === application.status ||
-                            (value !== "HANDED_TO_LEADER" && nextStatuses[application.status].includes(value)),
+                          ([value]) => value === application.status || nextStatuses[application.status].includes(value),
                         )
                         .map(([value, label]) => (
                           <option key={value} value={value}>
@@ -225,16 +221,6 @@ export function ApplicationsManager() {
                           </option>
                         ))}
                     </select>
-                    {application.status === "ADMIN_CONFIRMED" && (
-                      <button
-                        type="button"
-                        onClick={() => void updateStatus(application, "HANDED_TO_LEADER")}
-                        className="mt-2 flex h-9 w-full items-center justify-center gap-2 rounded-md bg-brand-700 px-3 text-xs font-bold text-white hover:bg-brand-800"
-                      >
-                        <Send size={14} />
-                        팀장 전달
-                      </button>
-                    )}
                   </td>
                   <td className="px-4 py-4">
                     <div className="flex justify-center gap-1">
