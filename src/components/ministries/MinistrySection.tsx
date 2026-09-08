@@ -80,10 +80,14 @@ export function MinistrySection({ showBreadcrumb = false }: { showBreadcrumb?: b
     scroller.scrollBy({ left: direction * scroller.clientWidth * 0.75, behavior: "smooth" });
   };
 
-  const visiblePosts =
-    filter === "all"
-      ? [...posts].sort((first, second) => Date.parse(second.createdAt) - Date.parse(first.createdAt))
-      : posts.filter((post) => post.ministryTeamId === filter);
+  const sortedPosts = [...posts].sort((first, second) => Date.parse(second.createdAt) - Date.parse(first.createdAt));
+  const seenTeams = new Set<string>();
+  const visiblePosts = sortedPosts.filter((post) => {
+    if (filter !== "all") return post.ministryTeamId === filter;
+    if (seenTeams.has(post.ministryTeamId)) return false;
+    seenTeams.add(post.ministryTeamId);
+    return true;
+  });
   const pagePosts = visiblePosts.slice((page - 1) * pageSize, page * pageSize);
   const selectedIndex = selected ? visiblePosts.findIndex((post) => post.id === selected.id) : -1;
   const openPostAtIndex = (index: number) => {
