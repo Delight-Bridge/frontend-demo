@@ -575,9 +575,26 @@ const gallerySeeds = [
     image("photo-1615461066841-6116e61058f4"),
     "한 사람의 참여가 누군가의 내일이 되도록 함께 헌혈했습니다.",
   ],
+  [
+    "gallery-16",
+    "team-1",
+    "이웃과 함께한 김밥 250줄 나눔",
+    image("photo-1556910103-1c02745aae4d"),
+    "정성껏 준비한 김밥 250줄을 이웃들에게 전달하며 안부를 나누었습니다.",
+  ],
+  [
+    "gallery-17",
+    "team-1",
+    "따뜻한 한 끼, 김밥 300줄 나눔",
+    image("photo-1601050690597-df0568f70950"),
+    "팀원들과 함께 김밥 300줄을 준비해 지역 이웃에게 따뜻한 한 끼를 전했습니다.",
+  ],
 ];
+// 새로고침한 시점을 기준으로 최신·지난주·이전 기록을 비교할 수 있는 데모 날짜입니다.
+const galleryDaysAgo: Record<string, number> = { "gallery-1": 21, "gallery-16": 10, "gallery-17": 1 };
 export const demoGallery: GalleryPost[] = gallerySeeds.map(
   ([id, ministryTeamId, title, thumbnailUrl, content], index) => {
+    const createdAt = new Date(Date.parse(now) - (galleryDaysAgo[id] ?? 3) * 24 * 60 * 60 * 1000).toISOString();
     const comments =
       index < 3
         ? [
@@ -591,8 +608,8 @@ export const demoGallery: GalleryPost[] = gallerySeeds.map(
                 "꾸준히 곁을 지켜주셔서 감사합니다.",
                 "다음 활동에는 저도 함께하고 싶어요.",
               ][index],
-              createdAt: now,
-              updatedAt: now,
+              createdAt,
+              updatedAt: createdAt,
               canManage: false,
             },
           ]
@@ -606,13 +623,13 @@ export const demoGallery: GalleryPost[] = gallerySeeds.map(
       thumbnailUrl,
       content,
       additionalImages,
-      authorId: index < 2 ? "demo-uploader" : "demo-admin",
-      author: demoUsers[index < 2 ? 1 : 0],
+      authorId: ministryTeamId === "team-1" || index < 2 ? "demo-uploader" : "demo-admin",
+      author: demoUsers[ministryTeamId === "team-1" || index < 2 ? 1 : 0],
       team: { id: ministryTeamId, name: demoTeams.find((team) => team.id === ministryTeamId)?.name ?? "사역팀" },
       displayOrder: index + 1,
       isVisible: true,
-      createdAt: now,
-      updatedAt: now,
+      createdAt,
+      updatedAt: createdAt,
       likeCount: 12 + index,
       commentCount: comments.length,
       likedByMe: false,
