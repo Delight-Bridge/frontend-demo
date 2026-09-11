@@ -49,12 +49,12 @@ export function AdminPage() {
     return (
       <main className="grid min-h-screen place-items-center bg-gray-100 p-5">
         <div className="w-full max-w-md rounded-md border bg-white p-8 text-center">
-          <LogIn className="mx-auto text-brand-700" size={32} />
+          <LogIn className="mx-auto text-brand-800" size={32} />
           <h1 className="mt-5 text-2xl font-bold">관리자 로그인이 필요합니다</h1>
           <p className="mt-3 text-sm leading-6 text-gray-500">
             회원, 봉사 신청, 뉴스 콘텐츠는 관리자만 관리할 수 있습니다.
           </p>
-          <button onClick={() => openLogin()} className="mt-6 h-11 w-full rounded-md bg-gray-900 font-bold text-white">
+          <button onClick={() => openLogin()} className="mt-6 h-10 w-full rounded-md bg-darkness font-bold text-white">
             로그인
           </button>
           <a href="/" className="mt-3 block py-2 text-sm text-gray-500">
@@ -71,7 +71,7 @@ export function AdminPage() {
           <p className="mt-3 text-sm text-gray-500">현재 계정은 관리자 페이지에 접근할 수 없습니다.</p>
           <a
             href="/"
-            className="mt-6 inline-flex h-11 items-center gap-2 rounded-md bg-gray-900 px-5 font-bold text-white"
+            className="mt-6 inline-flex h-11 items-center gap-2 rounded-md bg-darkness px-5 font-bold text-white"
           >
             <ArrowLeft size={17} />
             메인으로 돌아가기
@@ -94,7 +94,7 @@ export function AdminPage() {
               <button
                 key={id}
                 onClick={() => setTab(id)}
-                className={`flex h-11 shrink-0 items-center gap-3 rounded-md px-3 text-sm font-medium md:w-full ${tab === id ? "bg-gray-900 text-white" : "text-gray-600 hover:bg-gray-100"}`}
+                className={`flex h-10 shrink-0 items-center gap-3 rounded-md px-3 text-sm font-medium md:w-full ${tab === id ? "bg-darkness text-white" : "text-gray-600 hover:bg-gray-100"}`}
                 aria-current={tab === id ? "page" : undefined}
               >
                 <Icon size={17} />
@@ -109,7 +109,7 @@ export function AdminPage() {
             className="mb-6"
           />
           <div className="mb-7">
-            <p className="text-xs font-bold uppercase tracking-widest text-brand-700">Administration</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-brand-800">Administration</p>
             <h1 className="mt-2 text-2xl font-bold md:text-3xl">{currentLabel}</h1>
           </div>
           {tab === "dashboard" && <AdminDashboard onNavigate={setTab} />}

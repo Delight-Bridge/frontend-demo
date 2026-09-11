@@ -64,7 +64,7 @@ export function OnboardingDialog({
           <input
             required
             type="checkbox"
-            className="mt-0.5 h-5 w-5 shrink-0 accent-brand-600"
+            className="mt-0.5 h-5 w-5 shrink-0 accent-brand-400"
             checked={agreed}
             onChange={(event) => setAgreed(event.target.checked)}
           />
@@ -78,7 +78,7 @@ export function OnboardingDialog({
         <FormError message={error} />
         <button
           disabled={!agreed || saving}
-          className="h-11 w-full rounded-md bg-gray-900 font-bold text-white disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
+          className="h-10 w-full rounded-md bg-brand-400 font-bold text-darkness disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400 hover:bg-brand-500"
         >
           {saving ? "저장 중..." : "가입 완료"}
         </button>

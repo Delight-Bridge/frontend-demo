@@ -1,4 +1,5 @@
-import { ArrowLeft, CalendarDays, Users } from "lucide-react";
+import { SectionHeading } from "../SectionHeading";
+import { CalendarDays, Users } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { api } from "../../api/client";
@@ -56,43 +57,36 @@ export function ParticipationPage() {
   return (
     <>
       <SiteHeader />
-      <main className="min-h-screen bg-brand-900 px-4 py-10 text-white md:px-8 md:py-14">
+      <main id="main-content" className="content-page">
         <div className="mx-auto max-w-6xl">
-          <PageBreadcrumb items={[{ label: "당신의 차례입니다" }]} inverse className="mb-6" />
-          <a href="/" className="inline-flex items-center gap-2 text-sm text-brand-200 hover:text-white">
-            <ArrowLeft size={17} />
-            메인으로 돌아가기
-          </a>
-          <div className="mt-7 border-b border-brand-700 pb-8">
-            <p className="text-xs font-bold tracking-widest text-brand-300">VOLUNTEER</p>
-            <h1 className="mt-3 text-3xl font-bold md:text-4xl">당신의 차례입니다</h1>
-            <p className="mt-4 max-w-2xl leading-7 text-brand-100">
-              받은 은혜를 흘려보낼 봉사활동을 선택해 주세요. 달력 대신 참여 가능한 활동을 목록으로 안내합니다.
-            </p>
-          </div>
+          <PageBreadcrumb items={[{ label: "당신의 차례입니다" }]} className="mb-8" />
+          <SectionHeading
+            as="h1"
+            align="left"
+            eyebrow="VOLUNTEER"
+            title="당신의 차례입니다"
+            description="받은 은혜를 흘려보낼 봉사활동을 선택해 주세요. 달력 대신 참여 가능한 활동을 목록으로 안내합니다."
+          />
           {error && (
-            <p role="alert" className="mt-5 rounded-md bg-red-950/40 p-3 text-sm text-red-100">
+            <p role="alert" className="mt-5 rounded-md bg-red-50 p-3 text-sm text-red-700">
               {error}
             </p>
           )}
-          <section className="mt-8 space-y-4" aria-label="봉사활동 목록">
+          <section className="mt-10 space-y-4" aria-label="봉사활동 목록">
             {loading && (
-              <p
-                role="status"
-                className="rounded-lg border border-brand-700 bg-brand-800/60 p-10 text-center text-brand-100"
-              >
+              <p role="status" className="rounded-lg border border-gray-200 bg-white p-10 text-center text-gray-600">
                 봉사활동을 불러오는 중입니다.
               </p>
             )}
             {activities.map((activity) => (
               <article
                 key={activity.id}
-                className="grid gap-5 rounded-lg border border-brand-700 bg-brand-800/60 p-5 md:grid-cols-[1fr_auto] md:items-center"
+                className="grid gap-5 rounded-lg border border-gray-200 bg-white p-5 md:grid-cols-[1fr_auto] md:items-center"
               >
                 <div>
-                  <p className="text-xs font-bold text-brand-300">{activity.team?.name}</p>
+                  <p className="text-xs font-bold text-brand-800">{activity.team?.name}</p>
                   <h2 className="mt-2 text-xl font-bold">{activity.title}</h2>
-                  <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-brand-100">
+                  <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-gray-600">
                     <span className="flex items-center gap-2">
                       <CalendarDays size={16} />
                       {activity.schedule}
@@ -106,36 +100,36 @@ export function ParticipationPage() {
                 <button
                   onClick={() => open(activity)}
                   disabled={!activity.isAcceptingApplications}
-                  className="h-11 rounded-md bg-white px-5 text-sm font-bold text-brand-900 disabled:bg-gray-400"
+                  className="h-10 rounded-md bg-brand-400 px-5 text-sm font-bold text-darkness hover:bg-brand-500 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400 disabled:opacity-40"
                 >
                   상세보기 및 신청
                 </button>
               </article>
             ))}
             {!loading && !error && activities.length === 0 && (
-              <div className="rounded-lg border border-brand-700 bg-brand-800/60 px-5 py-14 text-center">
-                <CalendarDays className="mx-auto text-brand-300" size={36} aria-hidden="true" />
-                <p className="mt-4 font-bold text-white">현재 모집 중인 봉사활동이 없습니다.</p>
-                <p className="mt-2 text-sm leading-6 text-brand-200">
+              <div className="rounded-lg border border-gray-200 bg-white px-5 py-14 text-center">
+                <CalendarDays className="mx-auto text-brand-800" size={36} aria-hidden="true" />
+                <p className="mt-4 font-bold text-gray-900">현재 모집 중인 봉사활동이 없습니다.</p>
+                <p className="mt-2 text-sm leading-6 text-gray-600">
                   새로운 활동이 등록되면 이곳에서 안내해 드리겠습니다.
                 </p>
               </div>
             )}
           </section>
           {applications.length > 0 && (
-            <section className="mt-12 border-t border-brand-700 pt-8">
+            <section className="mt-12 border-t border-gray-200 pt-8">
               <h2 className="text-xl font-bold">이 브라우저의 신청 내역</h2>
               <div className="mt-4 space-y-3">
                 {applications.map((application) => (
                   <article
                     key={application.id}
-                    className="flex flex-wrap items-center justify-between gap-4 rounded-md bg-white/10 p-4"
+                    className="flex flex-wrap items-center justify-between gap-4 rounded-md border border-gray-200 bg-white p-4"
                   >
                     <div>
                       <p className="font-bold">
                         {application.activity?.title ?? application.team?.name ?? "봉사 신청"}
                       </p>
-                      <p className="mt-1 text-xs text-brand-200">
+                      <p className="mt-1 text-xs text-gray-600">
                         {application.participationDate || new Date(application.appliedAt).toLocaleDateString("ko-KR")} ·{" "}
                         {statusLabel[application.status]}
                       </p>
@@ -143,7 +137,7 @@ export function ParticipationPage() {
                     {application.canCancel && (
                       <button
                         onClick={() => void cancel(application)}
-                        className="rounded-md border border-brand-300 px-3 py-2 text-sm"
+                        className="rounded-md border border-brand-400 text-brand-800 hover:bg-brand-100 px-3 py-2 text-sm"
                       >
                         신청 취소
                       </button>

@@ -41,15 +41,15 @@ export function TestimonyWritePage() {
     return (
       <>
         <SiteHeader />
-        <main className="grid min-h-[75vh] place-items-center bg-gray-50 p-5">
+        <main className="grid min-h-[75vh] place-items-center bg-brand-50 p-5">
           <div className="w-full max-w-md rounded-lg border bg-white p-8 text-center">
-            <LogIn className="mx-auto text-brand-700" size={34} />
+            <LogIn className="mx-auto text-brand-800" size={34} />
             <h1 className="mt-5 text-2xl font-bold">로그인이 필요합니다</h1>
             <p className="mt-3 text-sm leading-6 text-gray-500">회복 간증은 로그인한 회원만 작성할 수 있습니다.</p>
             <button
               type="button"
               onClick={() => openLogin("/testimony/new")}
-              className="mt-6 h-11 w-full rounded-md bg-gray-900 font-bold text-white"
+              className="mt-6 h-10 w-full rounded-md bg-darkness font-bold text-white"
             >
               로그인
             </button>
@@ -66,7 +66,7 @@ export function TestimonyWritePage() {
   return (
     <>
       <SiteHeader />
-      <main id="main-content" className="min-h-[75vh] bg-gray-50 px-4 py-14 md:px-8 md:py-20">
+      <main id="main-content" className="min-h-[75vh] bg-brand-50 px-4 py-14 md:px-8 md:py-20">
         <div className="mx-auto max-w-3xl">
           <PageBreadcrumb
             items={[{ label: "회복 간증", href: "/testimony" }, { label: "간증 작성" }]}
@@ -80,7 +80,7 @@ export function TestimonyWritePage() {
           </a>
           <div className="mt-8 rounded-lg border bg-white">
             <div className="border-b px-5 py-5 md:px-7">
-              <p className="text-xs font-bold tracking-[0.2em] text-brand-700">WRITE</p>
+              <p className="text-xs font-bold tracking-[0.2em] text-brand-800">WRITE</p>
               <h1 className="mt-2 text-2xl font-bold text-gray-950">회복 간증 작성</h1>
             </div>
             <form onSubmit={submit} className="space-y-5 p-5 md:p-7">
@@ -112,7 +112,7 @@ export function TestimonyWritePage() {
               <FormError message={error} />
               <button
                 disabled={saving}
-                className="h-12 w-full rounded-md bg-brand-600 font-bold text-white hover:bg-brand-700 disabled:opacity-50"
+                className="h-12 w-full rounded-md bg-brand-400 font-bold text-darkness hover:bg-brand-500 disabled:opacity-40"
               >
                 {saving ? "등록 중..." : "등록"}
               </button>

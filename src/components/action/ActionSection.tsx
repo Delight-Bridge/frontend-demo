@@ -73,28 +73,28 @@ export function ActionSection() {
   const displayedActivities = showAllActivities ? sortedActivities : sortedActivities.slice(0, 3);
 
   return (
-    <section id="action" className="scroll-mt-16 bg-brand-900 px-4 py-20 text-white md:px-8 md:py-24">
+    <section id="action" className="scroll-mt-16 bg-brand-50 px-4 py-20 text-gray-900 md:px-8 md:py-24">
       <div className="mx-auto max-w-6xl">
         <div className="text-center">
-          <span className="mb-4 inline-block rounded-full bg-brand-800 px-3 py-1 text-xs font-bold tracking-widest text-brand-100">
+          <span className="mb-4 inline-block rounded-full border border-gray-200 bg-brand-100 px-3 py-1 text-xs font-bold tracking-widest text-brand-800">
             ACTION
           </span>
           <h2 className="text-3xl font-bold md:text-4xl">당신의 차례입니다</h2>
-          <p className="mx-auto mt-4 max-w-2xl font-light leading-7 text-brand-100">
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-gray-600">
             {showingRecentTeams
               ? "새로운 모집을 기다리는 동안 최근 현장을 만나보세요."
               : "받은 은혜를 흘려보낼 곳을 선택해 주세요."}
           </p>
           {!loading && !error && (
-            <p className="flex justify-end mt-6 font-bold text-white">
+            <p className="mt-6 flex justify-end text-sm font-bold text-brand-800">
               {currentMonth}월 신청 가능한 봉사는 총 {currentMonthActivityCount}개입니다.
             </p>
           )}
         </div>
 
-        {error && <p className="mt-8 rounded-md bg-red-950/40 p-3 text-sm text-red-100">{error}</p>}
+        {error && <p className="mt-8 rounded-md bg-red-50 p-3 text-sm text-red-700">{error}</p>}
         {!loading && !error && preview.activities.length === 0 && preview.recentTeams.length === 0 && (
-          <p className="mt-10 rounded-lg border border-brand-700 bg-brand-800/60 p-6 text-center text-brand-100">
+          <p className="mt-10 rounded-lg border border-gray-200 bg-white p-6 text-center text-gray-600">
             현재 신청 가능한 봉사활동과 최근 3개월의 활동 기록이 없습니다.
           </p>
         )}
@@ -105,12 +105,12 @@ export function ActionSection() {
             return (
               <article
                 key={activity.id}
-                className="grid gap-4 rounded-lg border border-brand-700 bg-brand-800/60 p-5 md:grid-cols-[1fr_auto] md:items-center"
+                className="grid gap-4 rounded-lg border border-gray-200 bg-white p-5 md:grid-cols-[1fr_auto] md:items-center"
               >
                 <div>
-                  <p className="text-xs font-bold text-brand-300">{activity.team?.name}</p>
+                  <p className="text-xs font-bold text-brand-800">{activity.team?.name}</p>
                   <h3 className="mt-1 text-lg font-bold">{activity.title}</h3>
-                  <div className="mt-3 flex flex-wrap gap-4 text-xs text-brand-100">
+                  <div className="mt-3 flex flex-wrap gap-4 text-xs text-gray-600">
                     <span className="flex items-center gap-1.5">
                       <CalendarDays size={14} />
                       {nextAvailableDate ? formatDate(nextAvailableDate, true) : activity.schedule}
@@ -124,7 +124,7 @@ export function ActionSection() {
                 <button
                   type="button"
                   onClick={() => setSelected(activity)}
-                  className="flex h-11 items-center justify-center gap-2 rounded-md bg-white px-5 text-sm font-bold text-brand-900"
+                  className="flex h-10 items-center justify-center gap-2 rounded-md bg-brand-400 px-5 text-sm font-bold text-darkness hover:bg-brand-500"
                 >
                   상세보기 및 신청
                   <ArrowRight size={16} />
@@ -137,21 +137,21 @@ export function ActionSection() {
             preview.recentTeams.map(({ team, latestActivity }) => (
               <article
                 key={team.id}
-                className="grid overflow-hidden rounded-lg border border-brand-700 bg-brand-800/60 sm:grid-cols-[160px_1fr] md:grid-cols-[190px_1fr_auto] md:items-center"
+                className="grid overflow-hidden rounded-lg border border-gray-200 bg-white sm:grid-cols-[160px_1fr] md:grid-cols-[190px_1fr_auto] md:items-center"
               >
                 <img src={latestActivity.thumbnailUrl} alt="" className="h-40 w-full object-cover sm:h-full" />
                 <div className="p-5">
-                  <p className="text-xs font-bold text-brand-300">최근 활동 봉사팀</p>
+                  <p className="text-xs font-bold text-brand-800">최근 활동 봉사팀</p>
                   <h3 className="mt-1 text-lg font-bold">{team.name}</h3>
-                  <p className="mt-2 text-sm leading-6 text-brand-100">{team.shortDescription}</p>
-                  <p className="mt-3 flex items-center gap-1.5 text-xs text-brand-200">
+                  <p className="mt-2 text-sm leading-6 text-gray-600">{team.shortDescription}</p>
+                  <p className="mt-3 flex items-center gap-1.5 text-xs text-gray-600">
                     <Clock3 size={14} />
                     {latestActivity.title} · {formatDate(latestActivity.createdAt)}
                   </p>
                 </div>
                 <a
                   href="/#ministries"
-                  className="mx-5 mb-5 flex h-11 items-center justify-center gap-2 rounded-md border border-brand-300 px-5 text-sm font-bold md:mx-5 md:mb-0"
+                  className="mx-5 mb-5 flex h-10 items-center justify-center gap-2 rounded-md border border-brand-400 text-brand-800 hover:bg-brand-100 px-5 text-sm font-bold md:mx-5 md:mb-0"
                 >
                   활동 현장 보기
                   <ArrowRight size={16} />
@@ -164,7 +164,7 @@ export function ActionSection() {
           <button
             type="button"
             onClick={() => setShowAllActivities((current) => !current)}
-            className="mx-auto mt-8 flex h-12 items-center justify-center gap-2 rounded-md border border-brand-400 px-6 font-bold text-white hover:bg-brand-800"
+            className="mx-auto mt-8 flex h-10 items-center justify-center gap-2 rounded-md border border-brand-400 bg-white px-6 text-sm font-bold text-brand-800 hover:bg-brand-100"
             aria-expanded={showAllActivities}
             aria-controls="all-volunteer-activities"
           >

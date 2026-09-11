@@ -53,10 +53,7 @@ export function MembersManager() {
       .catch((caught) => setError(caught instanceof Error ? caught.message : "사역팀을 불러오지 못했습니다."));
   }, []);
 
-  const updateUser = async (
-    id: string,
-    update: Partial<Pick<User, "role" | "status" | "ministryTeamId">>,
-  ) => {
+  const updateUser = async (id: string, update: Partial<Pick<User, "role" | "status" | "ministryTeamId">>) => {
     try {
       await api(`/admin/users/${id}`, { method: "PATCH", body: JSON.stringify(update) });
       await load();
@@ -81,13 +78,13 @@ export function MembersManager() {
     <div className="space-y-5">
       <div className="grid gap-3 rounded-md border bg-white p-4 md:grid-cols-[180px_160px_1fr]">
         <select
-            className={inputClass}
-            value={role}
-            onChange={(event) => {
-              setRole(event.target.value);
-              setPage(1);
-            }}
-            aria-label="회원 역할 필터"
+          className={inputClass}
+          value={role}
+          onChange={(event) => {
+            setRole(event.target.value);
+            setPage(1);
+          }}
+          aria-label="회원 역할 필터"
         >
           <option value="">모든 역할</option>
           <option value="ADMIN">관리자</option>
@@ -95,35 +92,35 @@ export function MembersManager() {
           <option value="USER">일반 회원</option>
         </select>
         <select
-            className={inputClass}
-            value={status}
-            onChange={(event) => {
-              setStatus(event.target.value);
-              setPage(1);
-            }}
-            aria-label="회원 상태 필터"
+          className={inputClass}
+          value={status}
+          onChange={(event) => {
+            setStatus(event.target.value);
+            setPage(1);
+          }}
+          aria-label="회원 상태 필터"
         >
           <option value="">모든 상태</option>
           <option value="ACTIVE">활성</option>
           <option value="SUSPENDED">정지</option>
         </select>
         <label className="relative">
-          <Search className="absolute left-3 top-2.5 text-gray-400" size={18}/>
+          <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
           <input
-              className={`${inputClass} pl-10`}
-              value={query}
-              onChange={(event) => {
-                setQuery(event.target.value);
-                setPage(1);
-              }}
-              placeholder="이름, 연락처 또는 소속 팀 검색"
+            className={`${inputClass} pl-10`}
+            value={query}
+            onChange={(event) => {
+              setQuery(event.target.value);
+              setPage(1);
+            }}
+            placeholder="이름, 연락처 또는 소속 팀 검색"
           />
         </label>
       </div>
       {error && (
-          <p role="alert" className="rounded-md bg-red-50 p-3 text-sm text-red-700">
-            {error}
-          </p>
+        <p role="alert" className="rounded-md bg-red-50 p-3 text-sm text-red-700">
+          {error}
+        </p>
       )}
       <section className="overflow-hidden rounded-md border bg-white">
         <div className="border-b px-5 py-4">
@@ -159,7 +156,7 @@ export function MembersManager() {
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3">
                       <span
-                        className={`grid h-10 w-10 shrink-0 place-items-center rounded-full ${member.status === "ACTIVE" ? "bg-brand-50 text-brand-700" : "bg-gray-100 text-gray-400"}`}
+                        className={`grid h-10 w-10 shrink-0 place-items-center rounded-full ${member.status === "ACTIVE" ? "bg-brand-50 text-brand-800" : "bg-gray-100 text-gray-400"}`}
                       >
                         {member.status === "ACTIVE" ? <UserRoundCheck size={19} /> : <UserRoundX size={19} />}
                       </span>
@@ -178,9 +175,7 @@ export function MembersManager() {
                       className={inputClass}
                       value={member.ministryTeamId ?? ""}
                       onClick={(event) => event.stopPropagation()}
-                      onChange={(event) =>
-                        void updateUser(member.id, { ministryTeamId: event.target.value || null })
-                      }
+                      onChange={(event) => void updateUser(member.id, { ministryTeamId: event.target.value || null })}
                       aria-label={`${member.name || member.nickname} 소속 팀`}
                     >
                       <option value="">소속 없음</option>
@@ -200,7 +195,7 @@ export function MembersManager() {
                               event.stopPropagation();
                               void reviewTeamChange(member.id, "APPROVE");
                             }}
-                            className="rounded bg-brand-700 px-2.5 py-1.5 font-bold text-white"
+                            className="rounded bg-brand-400 px-2.5 py-1.5 font-bold text-darkness hover:bg-brand-500"
                           >
                             승인
                           </button>

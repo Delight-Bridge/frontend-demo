@@ -32,7 +32,7 @@ export function TestimonialCard({
                 className="h-8 w-8 shrink-0 rounded-full object-cover sm:h-10 sm:w-10"
               />
             ) : (
-              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand-600 text-sm font-bold text-white sm:h-10 sm:w-10">
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand-100 text-sm font-bold text-brand-800 sm:h-10 sm:w-10">
                 {post.author?.nickname?.slice(0, 1)}
               </span>
             )}
@@ -76,7 +76,7 @@ export function TestimonialCard({
           <p className="mt-2 line-clamp-2 whitespace-pre-wrap text-sm leading-6 text-gray-700 sm:mt-3 sm:line-clamp-3 sm:leading-7 lg:text-base">
             {post.content}
           </p>
-          <span className="mt-2 inline-block text-xs font-bold text-brand-700 sm:mt-3">전체 이야기와 댓글 보기</span>
+          <span className="mt-2 inline-block text-xs font-bold text-brand-800 sm:mt-3">전체 이야기와 댓글 보기</span>
         </button>
         <div className="mt-3 sm:mt-4">
           <TestimonialActions

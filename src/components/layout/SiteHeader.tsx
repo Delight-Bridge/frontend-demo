@@ -93,7 +93,7 @@ export function SiteHeader() {
                 type="button"
                 onClick={() => openLogin()}
                 disabled={loading}
-                className="flex h-10 items-center gap-2 rounded-md bg-gray-900 px-4 text-sm font-bold text-white disabled:opacity-50"
+                className="flex h-10 items-center gap-2 rounded-md bg-darkness px-4 text-sm font-bold text-white disabled:opacity-40"
               >
                 <LogIn size={17} />
                 로그인

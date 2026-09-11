@@ -1,3 +1,4 @@
+import { SectionHeading } from "../SectionHeading";
 import { EyeOff, Plus } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../api/client";
@@ -46,19 +47,21 @@ export function TestimonyListPage() {
   return (
     <>
       <SiteHeader />
-      <main id="main-content" className="min-h-[75vh] bg-gray-50 px-4 py-14 md:px-8 md:py-20">
+      <main id="main-content" className="content-page">
         <div className="mx-auto max-w-6xl">
           <PageBreadcrumb items={[{ label: "회복 간증" }]} className="mb-8" />
           <div className="flex flex-wrap items-end justify-between gap-5">
-            <div>
-              <p className="text-xs font-bold tracking-[0.2em] text-brand-700">COMMUNITY</p>
-              <h1 className="mt-3 font-serif text-3xl font-bold text-gray-950 md:text-4xl">회복 간증</h1>
-              <p className="mt-3 text-sm leading-6 text-gray-500">나눔을 통해 경험한 은혜의 이야기를 함께 나눕니다.</p>
-            </div>
+            <SectionHeading
+              as="h1"
+              align="left"
+              eyebrow="COMMUNITY"
+              title="회복 간증"
+              description="나눔을 통해 경험한 은혜의 이야기를 함께 나눕니다."
+            />
             <button
               type="button"
               onClick={write}
-              className="flex h-11 items-center gap-2 rounded-md bg-brand-600 px-4 text-sm font-bold text-white hover:bg-brand-700"
+              className="flex h-10 items-center gap-2 rounded-md bg-brand-400 px-4 text-sm font-bold text-darkness hover:bg-brand-500"
             >
               <Plus size={17} />
               글쓰기
@@ -93,7 +96,7 @@ export function TestimonyListPage() {
                         <td className="px-5 py-5">
                           <a
                             href={`/testimony/${post.id}`}
-                            className="inline-flex items-center gap-2 font-bold text-gray-950 hover:text-brand-700"
+                            className="inline-flex items-center gap-2 font-bold text-gray-950 hover:text-brand-800"
                           >
                             {post.visibility === "PRIVATE" && (
                               <EyeOff size={15} className="shrink-0 text-gray-400" aria-label="비공개" />

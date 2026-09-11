@@ -48,19 +48,19 @@ export function NewsSection() {
   return (
     <section id="attention" className="scroll-mt-16 bg-darkness px-4 py-20 text-white md:px-8 md:py-24">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-10 flex items-end justify-between gap-4">
+        <div className="mb-10 flex flex-col items-center gap-4">
           <SectionHeading
             title="우리 곁의 아픔"
             description="외면할 수 없는 다음 세대와 청년들의 이야기"
             href="/news"
-            align="left"
+            align="center"
             inverse
             titleClassName="font-serif"
           />
           {admin && (
             <button
               onClick={() => setEditing("new")}
-              className="flex h-10 shrink-0 items-center gap-2 rounded-md bg-white px-3 text-sm font-bold text-gray-900"
+              className="flex h-10 shrink-0 items-center gap-2 rounded-md bg-brand-400 px-3 text-sm font-bold text-darkness hover:bg-brand-500"
             >
               <Plus size={17} />
               소식 등록

@@ -177,7 +177,7 @@ export function ProfilePage({ showTeam = true }: { showTeam?: boolean }) {
         )}
         <button
           disabled={saving}
-          className="h-11 w-full rounded-md bg-gray-900 font-bold text-white disabled:opacity-50"
+          className="h-10 w-full rounded-md bg-brand-400 font-bold text-darkness disabled:opacity-40 hover:bg-brand-500"
         >
           {saving ? "저장 중..." : "정보 저장하기"}
         </button>
@@ -226,7 +226,7 @@ export function ProfilePage({ showTeam = true }: { showTeam?: boolean }) {
                         value={team.id}
                         checked={requestedTeamId === team.id}
                         onChange={() => setRequestedTeamId(team.id)}
-                        className="h-4 w-4 accent-brand-600"
+                        className="h-4 w-4 accent-brand-400"
                       />
                       {team.name}
                     </label>
@@ -238,13 +238,13 @@ export function ProfilePage({ showTeam = true }: { showTeam?: boolean }) {
               <button
                 type="button"
                 onClick={() => setTeamDialogOpen(false)}
-                className="h-11 rounded-md border font-bold text-gray-700"
+                className="h-10 rounded-md border font-bold text-gray-700"
               >
                 취소
               </button>
               <button
                 disabled={!requestedTeamId || requestingTeamChange}
-                className="h-11 rounded-md bg-brand-700 font-bold text-white disabled:cursor-not-allowed disabled:opacity-40"
+                className="h-10 rounded-md bg-brand-400 font-bold text-darkness disabled:cursor-not-allowed disabled:opacity-40 hover:bg-brand-500"
               >
                 {requestingTeamChange ? "신청 중..." : "변경 신청"}
               </button>
@@ -255,7 +255,7 @@ export function ProfilePage({ showTeam = true }: { showTeam?: boolean }) {
       {teamRequestSaved && (
         <Dialog title="변경 신청 완료" onClose={() => setTeamRequestSaved(false)} size="sm">
           <div className="p-6 text-center">
-            <CheckCircle2 className="mx-auto text-brand-700" size={42} aria-hidden="true" />
+            <CheckCircle2 className="mx-auto text-brand-800" size={42} aria-hidden="true" />
             <p role="status" className="mt-4 font-bold text-gray-900">
               변경 요청이 관리자에게 전달되었습니다.
             </p>
@@ -263,7 +263,7 @@ export function ProfilePage({ showTeam = true }: { showTeam?: boolean }) {
             <button
               type="button"
               onClick={() => setTeamRequestSaved(false)}
-              className="mt-6 h-11 w-full rounded-md bg-brand-700 font-bold text-white"
+              className="mt-6 h-10 w-full rounded-md bg-brand-400 font-bold text-darkness hover:bg-brand-500"
             >
               확인
             </button>
@@ -288,7 +288,7 @@ export function ProfilePage({ showTeam = true }: { showTeam?: boolean }) {
                 type="button"
                 onClick={() => setWithdrawDialogOpen(false)}
                 disabled={withdrawing}
-                className="h-11 rounded-md border font-bold text-gray-700 disabled:opacity-40"
+                className="h-10 rounded-md border font-bold text-gray-700 disabled:opacity-40"
               >
                 취소
               </button>
@@ -296,7 +296,7 @@ export function ProfilePage({ showTeam = true }: { showTeam?: boolean }) {
                 type="button"
                 onClick={() => void withdraw()}
                 disabled={withdrawing}
-                className="h-11 rounded-md bg-red-600 font-bold text-white disabled:opacity-40"
+                className="h-10 rounded-md bg-red-600 font-bold text-white disabled:opacity-40"
               >
                 {withdrawing ? "탈퇴 처리 중..." : "탈퇴하기"}
               </button>

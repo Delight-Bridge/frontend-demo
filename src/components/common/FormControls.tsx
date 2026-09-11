@@ -3,7 +3,7 @@ import { ImageUp } from "lucide-react";
 import { uploadImage } from "../../api/client";
 
 export const inputClass =
-  "w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100";
+  "w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-100";
 
 export function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
@@ -53,7 +53,7 @@ export function ImageField({
         onChange={(event) => onChange(event.target.value)}
         placeholder="https://... 또는 아래에서 파일 선택"
       />
-      <label className="mt-2 flex h-10 cursor-pointer items-center justify-center gap-2 rounded-md border border-dashed border-gray-300 text-xs text-gray-600 hover:border-brand-500 hover:text-brand-700">
+      <label className="mt-2 flex h-10 cursor-pointer items-center justify-center gap-2 rounded-md border border-dashed border-gray-300 text-xs text-gray-600 hover:border-brand-500 hover:text-brand-800">
         <ImageUp size={16} />
         {uploading ? "업로드 중..." : "JPG, PNG, WEBP 파일 선택 (최대 5MB)"}
         <input

@@ -10,7 +10,7 @@ type NewsCardProps = {
 
 export function NewsCard({ article, canManage, onEdit, onDelete }: NewsCardProps) {
   return (
-    <article className="group relative h-[300px] overflow-hidden rounded-lg border border-white/15 bg-white shadow-lg shadow-black/20 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/30">
+    <article className="group relative h-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md">
       {!article.isVisible && (
         <span className="absolute left-3 top-3 z-10 flex items-center gap-1 rounded-full bg-black/75 px-2.5 py-1 text-xs font-bold text-white">
           <EyeOff size={13} />
@@ -40,19 +40,19 @@ export function NewsCard({ article, canManage, onEdit, onDelete }: NewsCardProps
         className="flex h-full flex-col text-gray-900"
         aria-label={`${article.title} 상세 보기`}
       >
-        <div className="h-44 shrink-0 overflow-hidden bg-gray-200">
+        <div className="aspect-[16/10] shrink-0 overflow-hidden bg-gray-200">
           <img
             src={article.thumbnailUrl}
             alt=""
             className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
           />
         </div>
-        <div className="flex min-h-0 flex-1 flex-col p-4">
-          <h3 className="line-clamp-2 font-serif text-lg font-bold leading-snug">{article.title}</h3>
-          <div className="mt-auto flex items-center gap-2 text-xs text-gray-500">
-            <span className="font-bold text-brand-700">{article.sourceName || "원문"}</span>
+        <div className="flex min-h-32 flex-1 flex-col gap-3 p-3 sm:p-4">
+          <h3 className="line-clamp-2 font-serif text-sm font-bold leading-snug sm:text-lg">{article.title}</h3>
+          <div className="mt-auto flex flex-wrap items-center gap-2 text-xs text-gray-500">
+            <span className="font-bold text-brand-800">{article.sourceName || "원문"}</span>
             <span aria-hidden="true">·</span>
-            <time>{article.publishedAt}</time>
+            <time className="whitespace-nowrap">{article.publishedAt}</time>
             <ArrowRight className="ml-auto shrink-0" size={14} aria-hidden="true" />
           </div>
         </div>

@@ -60,7 +60,7 @@ export function TestimonialSection() {
     }
   };
   return (
-    <section id="testimonies" className="scroll-mt-16 bg-gray-50 px-4 py-20 md:px-8 md:py-24">
+    <section id="testimonies" className="scroll-mt-16 bg-brand-50 px-4 py-20 md:px-8 md:py-24">
       <div className="mx-auto max-w-6xl">
         <div className="mb-10 flex items-end justify-between gap-4">
           <SectionHeading
@@ -71,7 +71,7 @@ export function TestimonialSection() {
           />
           <button
             onClick={write}
-            className="flex h-10 shrink-0 items-center gap-2 rounded-md bg-brand-600 px-3 text-sm font-bold text-white"
+            className="flex h-10 shrink-0 items-center gap-2 rounded-md bg-brand-400 px-3 text-sm font-bold text-darkness hover:bg-brand-500"
           >
             <Plus size={17} />
             간증 쓰기

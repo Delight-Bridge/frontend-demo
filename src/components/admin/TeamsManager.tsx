@@ -36,7 +36,7 @@ export function TeamsManager() {
                 <div className="flex items-center gap-2">
                   <h4 className="text-sm font-bold">{team.name}</h4>
                   <span
-                    className={`flex items-center gap-1 text-[10px] font-bold ${team.isVisible ? "text-brand-700" : "text-gray-400"}`}
+                    className={`flex items-center gap-1 text-[10px] font-bold ${team.isVisible ? "text-brand-800" : "text-gray-400"}`}
                   >
                     {team.isVisible ? <Eye size={12} /> : <EyeOff size={12} />}
                     {team.isVisible ? "공개" : "비공개"}
@@ -48,7 +48,7 @@ export function TeamsManager() {
               <div className="flex justify-end gap-1">
                 <button
                   onClick={() => setManaging(team)}
-                  className="grid h-9 w-9 place-items-center text-brand-700"
+                  className="grid h-9 w-9 place-items-center text-brand-800"
                   aria-label={`${team.name} 회원 및 게시물 관리`}
                 >
                   <Users size={17} />

@@ -57,7 +57,7 @@ export function TeamActivitiesPage() {
     <div className="rounded-lg border bg-white p-5 md:p-7">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-bold tracking-widest text-brand-700">TEAM VOLUNTEER ACTIVITIES</p>
+          <p className="text-xs font-bold tracking-widest text-brand-800">TEAM VOLUNTEER ACTIVITIES</p>
           <h2 className="mt-2 text-2xl font-bold text-gray-950">{team?.name ?? "담당 팀"} 봉사활동 관리</h2>
           <p className="mt-2 text-sm text-gray-500">담당 팀의 봉사활동 정보와 신청 가능 여부를 관리하세요.</p>
         </div>
@@ -65,7 +65,7 @@ export function TeamActivitiesPage() {
           type="button"
           onClick={() => setEditing("new")}
           disabled={!team}
-          className="flex h-10 items-center gap-2 rounded-md bg-gray-900 px-4 text-sm font-bold text-white disabled:opacity-40"
+          className="flex h-10 items-center gap-2 rounded-md bg-brand-400 px-4 text-sm font-bold text-darkness disabled:opacity-40 hover:bg-brand-500"
         >
           <Plus size={17} />
           활동 등록
@@ -92,7 +92,7 @@ export function TeamActivitiesPage() {
                   <div className="flex items-center gap-2">
                     <h3 className="font-bold text-gray-950">{activity.title}</h3>
                     <span
-                      className={activity.isVisible ? "text-brand-700" : "text-gray-400"}
+                      className={activity.isVisible ? "text-brand-800" : "text-gray-400"}
                       aria-label={activity.isVisible ? "공개" : "비공개"}
                     >
                       {activity.isVisible ? <Eye size={15} /> : <EyeOff size={15} />}

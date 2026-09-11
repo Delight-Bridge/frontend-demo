@@ -73,7 +73,7 @@ function PasswordInput({
         <button
           type="button"
           onClick={onToggle}
-          className="absolute inset-y-0 right-0 grid w-11 place-items-center rounded-r-md text-gray-500 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-500"
+          className="absolute inset-y-0 right-0 grid w-11 place-items-center rounded-r-md text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-400"
           aria-label={`${label} ${visible ? "숨기기" : "표시"}`}
           aria-pressed={visible}
         >
@@ -199,7 +199,7 @@ export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; retur
             <label className="flex w-fit cursor-pointer items-center gap-2 text-sm text-gray-700">
               <input
                 type="checkbox"
-                className="h-4 w-4 rounded border-gray-300 accent-brand-600"
+                className="h-4 w-4 rounded border-gray-300 accent-brand-400"
                 checked={rememberMe}
                 onChange={(event) => setRememberMe(event.target.checked)}
               />
@@ -209,7 +209,7 @@ export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; retur
           <FormError message={error} />
           <button
             disabled={saving || !credentials.email.trim() || !credentials.password}
-            className="h-11 w-full rounded-md bg-gray-900 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
+            className="h-10 w-full rounded-md bg-darkness font-bold text-white disabled:cursor-not-allowed disabled:opacity-40"
           >
             {saving ? "로그인 중..." : "로그인"}
           </button>
@@ -221,7 +221,7 @@ export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; retur
           <button
             type="button"
             onClick={() => changeMode("signup")}
-            className="h-11 w-full rounded-md border border-gray-300 bg-white text-sm font-bold text-gray-800 hover:bg-gray-50"
+            className="h-10 w-full rounded-md border border-gray-300 bg-white text-sm font-bold text-gray-800 hover:bg-gray-50"
           >
             이메일로 회원가입
           </button>
@@ -273,7 +273,7 @@ export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; retur
           )}
           <button
             disabled={!credentials.email.trim()}
-            className="h-11 w-full rounded-md bg-gray-900 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
+            className="h-10 w-full rounded-md bg-darkness font-bold text-white disabled:cursor-not-allowed disabled:opacity-40"
           >
             재설정 안내 받기
           </button>
@@ -323,7 +323,7 @@ export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; retur
             />
           </div>
           <div className="border-t pt-4">
-            <p className="mb-4 text-sm font-bold text-brand-700">최초 가입 시 필수 입력</p>
+            <p className="mb-4 text-sm font-bold text-brand-800">최초 가입 시 필수 입력</p>
             <div className="space-y-4">
               <Field label="이름" required>
                 <input
@@ -354,7 +354,7 @@ export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; retur
             <input
               required
               type="checkbox"
-              className="mt-0.5 h-5 w-5 shrink-0 accent-brand-600"
+              className="mt-0.5 h-5 w-5 shrink-0 accent-brand-400"
               checked={agreed}
               onChange={(event) => setAgreed(event.target.checked)}
             />
@@ -368,7 +368,7 @@ export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; retur
           <FormError message={error} />
           <button
             disabled={!agreed || saving}
-            className="h-11 w-full rounded-md bg-gray-900 font-bold text-white disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
+            className="h-10 w-full rounded-md bg-darkness font-bold text-white disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
           >
             {saving ? "가입 중..." : "가입 완료"}
           </button>
@@ -427,7 +427,7 @@ export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; retur
           <button
             type="button"
             onClick={() => changeMode("reset-password")}
-            className="h-11 flex-1 rounded-md text-sm font-bold text-gray-900 hover:bg-gray-50"
+            className="h-10 flex-1 rounded-md text-sm font-bold text-gray-900 hover:bg-gray-50"
           >
             기존 계정 찾기
           </button>
@@ -435,7 +435,7 @@ export function LoginDialog({ onClose, returnUrl }: { onClose: () => void; retur
           <button
             type="button"
             onClick={() => changeMode("signup")}
-            className="h-11 flex-1 rounded-md text-sm font-bold text-gray-900 hover:bg-gray-50"
+            className="h-10 flex-1 rounded-md text-sm font-bold text-gray-900 hover:bg-gray-50"
           >
             회원가입
           </button>

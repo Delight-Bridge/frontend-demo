@@ -1,3 +1,4 @@
+import { SectionHeading } from "../SectionHeading";
 import { EyeOff, LayoutGrid, List, Pencil, Plus, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../api/client";
@@ -59,20 +60,22 @@ export function NewsListPage() {
   return (
     <>
       <SiteHeader />
-      <main id="main-content" className="min-h-[75vh] bg-gray-50 px-4 py-14 md:px-8 md:py-20">
+      <main id="main-content" className="content-page">
         <div className="mx-auto max-w-6xl">
           <PageBreadcrumb items={[{ label: "우리 곁의 아픔" }]} className="mb-8" />
           <div className="flex flex-wrap items-end justify-between gap-5">
-            <div>
-              <p className="text-xs font-bold tracking-[0.2em] text-brand-700">NEWS & CONTENTS</p>
-              <h1 className="mt-3 font-serif text-3xl font-bold text-gray-950 md:text-4xl">우리 곁의 아픔</h1>
-              <p className="mt-3 text-sm leading-6 text-gray-500">외면할 수 없는 다음 세대와 청년들의 이야기</p>
-            </div>
+            <SectionHeading
+              as="h1"
+              align="left"
+              eyebrow="NEWS & CONTENTS"
+              title="우리 곁의 아픔"
+              description="외면할 수 없는 다음 세대와 청년들의 이야기"
+            />
             {admin && (
               <button
                 type="button"
                 onClick={() => setEditing("new")}
-                className="flex h-11 items-center gap-2 rounded-md bg-gray-900 px-4 text-sm font-bold text-white"
+                className="flex h-10 items-center gap-2 rounded-md bg-brand-400 px-4 text-sm font-bold text-darkness hover:bg-brand-500"
               >
                 <Plus size={17} />
                 기사 등록
@@ -97,7 +100,7 @@ export function NewsListPage() {
                   <button
                     type="button"
                     onClick={() => setViewMode("grid")}
-                    className={`flex h-9 items-center gap-2 rounded px-3 text-xs font-bold ${viewMode === "grid" ? "bg-gray-900 text-white" : "text-gray-500 hover:bg-gray-100"}`}
+                    className={`flex h-9 items-center gap-2 rounded px-3 text-xs font-bold ${viewMode === "grid" ? "bg-darkness text-white" : "text-gray-500 hover:bg-gray-100"}`}
                     aria-pressed={viewMode === "grid"}
                   >
                     <LayoutGrid size={16} aria-hidden="true" />
@@ -105,7 +108,7 @@ export function NewsListPage() {
                   <button
                     type="button"
                     onClick={() => setViewMode("list")}
-                    className={`flex h-9 items-center gap-2 rounded px-3 text-xs font-bold ${viewMode === "list" ? "bg-gray-900 text-white" : "text-gray-500 hover:bg-gray-100"}`}
+                    className={`flex h-9 items-center gap-2 rounded px-3 text-xs font-bold ${viewMode === "list" ? "bg-darkness text-white" : "text-gray-500 hover:bg-gray-100"}`}
                     aria-pressed={viewMode === "list"}
                   >
                     <List size={16} aria-hidden="true" />
@@ -133,7 +136,7 @@ export function NewsListPage() {
                           <td className="px-5 py-5">
                             <a
                               href={`/news/${article.id}`}
-                              className="flex items-center gap-4 font-bold text-gray-950 hover:text-brand-700"
+                              className="flex items-center gap-4 font-bold text-gray-950 hover:text-brand-800"
                             >
                               <img
                                 src={article.thumbnailUrl}

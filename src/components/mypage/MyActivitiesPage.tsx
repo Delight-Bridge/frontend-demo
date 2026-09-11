@@ -127,7 +127,7 @@ export function MyActivitiesPage() {
             <article key={application.id} className="rounded-lg border bg-white p-5">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <p className="text-xs font-bold text-brand-700">{application.team?.name ?? "사역팀"}</p>
+                  <p className="text-xs font-bold text-brand-800">{application.team?.name ?? "사역팀"}</p>
                   <h3 className="mt-1 font-bold">{application.activity?.title ?? "기존 봉사 신청"}</h3>
                   <div className="mt-3 flex flex-wrap gap-4 text-xs text-gray-500">
                     <span className="flex items-center gap-1.5">
@@ -174,7 +174,7 @@ export function MyActivitiesPage() {
             <p className="mt-4 font-bold text-gray-700">아직 신청한 봉사활동이 없습니다.</p>
             <a
               href="/volunteer"
-              className="mt-4 inline-flex rounded-md bg-brand-700 px-4 py-2 text-sm font-bold text-white"
+              className="mt-4 inline-flex rounded-md bg-brand-400 px-4 py-2 text-sm font-bold text-darkness hover:bg-brand-500"
             >
               봉사활동 살펴보기
             </a>

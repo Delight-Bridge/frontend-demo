@@ -26,6 +26,13 @@ function HomePage() {
       <SiteHeader />
       <main id="main-content">
         <HeroSection />
+        <aside className="bg-darkness pt-24 text-center text-white" aria-label="Delight Bridge 메시지">
+          <blockquote className="mx-auto max-w-2xl font-serif text-lg leading-snug">
+            “작은 나눔 하나가
+            <br className="sm:hidden" /> 누군가에게는 <span className="text-brand-400">생명줄</span>이 됩니다”
+          </blockquote>
+          <p className="mt-3 text-xs font-medium text-brand-400">— 디아코니아팀 활동 후기 중</p>
+        </aside>
         <NewsSection />
         <MinistrySection />
         <ActionSection />
@@ -40,7 +47,7 @@ function SectionPage({ children }: { children: React.ReactNode }) {
   return (
     <>
       <SiteHeader />
-      <main id="main-content" className="min-h-screen pt-16">
+      <main id="main-content" className="min-h-[75vh] bg-brand-50">
         {children}
       </main>
       <Footer />
@@ -53,9 +60,9 @@ function NotFoundPage() {
     <SectionPage>
       <div className="grid min-h-[60vh] place-items-center px-4 text-center">
         <div>
-          <p className="text-sm font-bold text-brand-700">404</p>
+          <p className="text-sm font-bold text-brand-800">404</p>
           <h1 className="mt-2 text-3xl font-bold">페이지를 찾을 수 없습니다</h1>
-          <a href="/" className="mt-6 inline-flex rounded-md bg-gray-900 px-5 py-3 font-bold text-white">
+          <a href="/" className="mt-6 inline-flex rounded-md bg-darkness px-5 py-3 font-bold text-white">
             메인으로 돌아가기
           </a>
         </div>

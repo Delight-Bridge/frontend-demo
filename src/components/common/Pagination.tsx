@@ -36,7 +36,7 @@ export function Pagination({ page, totalPages, totalItems, onPageChange, inverse
             type="button"
             onClick={() => onPageChange(value)}
             aria-current={value === page ? "page" : undefined}
-            className={`h-10 min-w-10 rounded-md border px-3 text-sm font-bold ${value === page ? "border-brand-600 bg-brand-600 text-white" : buttonClass}`}
+            className={`h-10 min-w-10 rounded-md border px-3 text-sm font-bold ${value === page ? "border-brand-400 bg-brand-400 text-darkness hover:bg-brand-500" : buttonClass}`}
           >
             {value}
           </button>

@@ -14,7 +14,7 @@ export function HeroSection() {
 
       <div className="z-10 flex animate-fade-in flex-col items-center">
         <h1 className="mb-6 font-serif text-4xl font-bold leading-tight tracking-normal md:text-6xl">
-          어둠 속에 빛을
+          어둠 속에 <span className="text-brand-400">빛</span>을
           <br />
           전하는 생명줄
         </h1>
@@ -24,7 +24,7 @@ export function HeroSection() {
           우리의 작은 디아코니아
         </p>
         <div className="mt-12">
-          <span className="mb-12 inline-block rounded-full border border-white/30 px-4 py-1 text-sm uppercase tracking-widest backdrop-blur-sm">
+          <span className="mb-12 inline-block rounded-full border border-brand-400 text-brand-400 px-4 py-1 text-sm uppercase tracking-widest backdrop-blur-sm">
             Delight Bridge
           </span>
         </div>
@@ -32,7 +32,7 @@ export function HeroSection() {
 
       <a
         href="#attention"
-        className="absolute bottom-8 z-10 flex animate-bounce-slow flex-col items-center text-white/70 transition hover:text-white"
+        className="absolute bottom-8 z-10 flex animate-bounce-slow flex-col items-center text-brand-400 transition hover:text-brand-300"
         aria-label="우리 곁의 아픔 섹션으로 이동"
       >
         <span className="mb-2 text-xs font-light uppercase tracking-widest">Scroll</span>

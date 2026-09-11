@@ -107,32 +107,37 @@ export function MinistrySection({ showBreadcrumb = false }: { showBreadcrumb?: b
   };
 
   return (
-    <section id="ministries" className="scroll-mt-16 bg-white px-4 py-20 md:px-8 md:py-24">
+    <section
+      id="ministries"
+      className={showBreadcrumb ? "content-page scroll-mt-16" : "scroll-mt-16 bg-brand-50 px-4 py-20 md:px-8 md:py-24"}
+    >
       <div className="mx-auto max-w-6xl">
         {showBreadcrumb && <PageBreadcrumb items={[{ label: "우리의 응답" }]} className="mb-8" />}
-        <div className="mb-10 flex items-end justify-between gap-4">
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-5">
           <SectionHeading
             title="우리의 응답"
             description="어둠 속에 빛을 비추는 15개 사역팀의 현장"
-            href="/activities"
+            href={showBreadcrumb ? undefined : "/activities"}
+            as={showBreadcrumb ? "h1" : "h2"}
+            eyebrow={showBreadcrumb ? "OUR RESPONSE" : undefined}
             align="left"
           />
           {canCreate && (
             <button
               onClick={() => setEditing("new")}
-              className="flex h-10 shrink-0 items-center gap-2 rounded-md bg-gray-900 px-3 text-sm font-bold text-white"
+              className="flex h-10 shrink-0 items-center gap-2 rounded-md bg-brand-400 px-3 text-sm font-bold text-darkness hover:bg-brand-500"
             >
               <Plus size={17} />
               현장 등록
             </button>
           )}
         </div>
-        <div className="mb-6 flex items-center gap-2">
+        <div className="mb-6 flex items-center gap-2 rounded-lg border border-gray-200 bg-white p-3">
           <button
             type="button"
             onClick={() => scrollTeams(-1)}
             disabled={!canScrollTeamsLeft}
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gray-900 text-white shadow-md transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-darkness text-white shadow-md transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
             aria-label="이전 사역팀 보기"
           >
             <ChevronLeft size={21} />
@@ -149,7 +154,7 @@ export function MinistrySection({ showBreadcrumb = false }: { showBreadcrumb?: b
                 setPage(1);
               }}
               aria-pressed={filter === "all"}
-              className={`shrink-0 rounded-full px-4 py-2 text-sm ${filter === "all" ? "bg-gray-900 text-white" : "bg-gray-100"}`}
+              className={`shrink-0 rounded-full px-4 py-2 text-sm ${filter === "all" ? "bg-darkness text-white" : "bg-gray-100"}`}
             >
               전체
             </button>
@@ -161,7 +166,7 @@ export function MinistrySection({ showBreadcrumb = false }: { showBreadcrumb?: b
                   setPage(1);
                 }}
                 aria-pressed={filter === team.id}
-                className={`shrink-0 rounded-full px-4 py-2 text-sm ${filter === team.id ? "bg-gray-900 text-white" : "bg-gray-100"}`}
+                className={`shrink-0 rounded-full px-4 py-2 text-sm ${filter === team.id ? "bg-darkness text-white" : "bg-gray-100"}`}
               >
                 {team.name}
               </button>
@@ -171,7 +176,7 @@ export function MinistrySection({ showBreadcrumb = false }: { showBreadcrumb?: b
             type="button"
             onClick={() => scrollTeams(1)}
             disabled={!canScrollTeamsRight}
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gray-900 text-white shadow-md transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-darkness text-white shadow-md transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
             aria-label="다음 사역팀 보기"
           >
             <ChevronRight size={21} />
@@ -184,7 +189,7 @@ export function MinistrySection({ showBreadcrumb = false }: { showBreadcrumb?: b
           </p>
         )}
         {!loading && visiblePosts.length ? (
-          <div className="grid grid-cols-2 gap-1 md:grid-cols-3 md:gap-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-5">
             {pagePosts.map((post) => (
               <MinistryCard
                 key={post.id}

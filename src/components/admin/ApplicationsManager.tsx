@@ -131,7 +131,7 @@ export function ApplicationsManager() {
         <button
           onClick={() => setEditing("new")}
           disabled={!teams.length}
-          className="flex h-10 items-center justify-center gap-2 rounded-md bg-gray-900 px-4 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-40"
+          className="flex h-10 items-center justify-center gap-2 rounded-md bg-brand-400 px-4 text-sm font-bold text-darkness disabled:cursor-not-allowed disabled:opacity-40 hover:bg-brand-500"
         >
           <Plus size={17} />
           신청 등록
@@ -168,7 +168,7 @@ export function ApplicationsManager() {
                     <div className="flex items-center gap-2">
                       <strong className="text-gray-950">{application.applicantName}</strong>
                       {application.user && (
-                        <span className="rounded bg-brand-50 px-1.5 py-0.5 text-[10px] font-bold text-brand-700">
+                        <span className="rounded bg-brand-50 px-1.5 py-0.5 text-[10px] font-bold text-brand-800">
                           회원
                         </span>
                       )}
@@ -179,7 +179,7 @@ export function ApplicationsManager() {
                     </p>
                   </td>
                   <td className="px-4 py-4">
-                    <a href={`tel:${application.phone || application.contact}`} className="hover:text-brand-700">
+                    <a href={`tel:${application.phone || application.contact}`} className="hover:text-brand-800">
                       {application.phone || application.contact}
                     </a>
                   </td>
@@ -219,7 +219,7 @@ export function ApplicationsManager() {
                     <button
                       type="button"
                       onClick={() => setSelected(application)}
-                      className="mt-2 w-full text-center text-xs font-bold text-brand-700 hover:underline"
+                      className="mt-2 w-full text-center text-xs font-bold text-brand-800 hover:underline"
                     >
                       상세 보기
                     </button>

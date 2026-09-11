@@ -19,7 +19,7 @@ export function MinistryCard({
   const isNew = Number.isFinite(uploadedAt) && uploadAge >= 0 && uploadAge <= 7 * 24 * 60 * 60 * 1000;
 
   return (
-    <article className="group relative aspect-square overflow-hidden bg-gray-200">
+    <article className="group relative aspect-square overflow-hidden rounded-lg bg-gray-200 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md">
       <button
         type="button"
         onClick={onSelect}
@@ -37,7 +37,7 @@ export function MinistryCard({
           <span className="line-clamp-2 block text-sm font-bold md:text-base">{post.title}</span>
         </span>
         {isNew && (
-          <span className="absolute left-3 top-3 rounded-full bg-brand-600 px-2.5 py-1 text-[10px] font-bold tracking-wider text-white shadow-md">
+          <span className="absolute left-3 top-3 rounded-full border border-brand-400 bg-white px-2.5 py-1 text-[10px] font-bold tracking-wider text-brand-800 shadow-md">
             NEW
           </span>
         )}

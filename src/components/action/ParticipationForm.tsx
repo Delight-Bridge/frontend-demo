@@ -44,11 +44,7 @@ export function ParticipationForm({
     () =>
       new Set(
         applications
-          .filter(
-            (item) =>
-              ["SUBMITTED", "LEADER_CONFIRMED"].includes(item.status) &&
-              item.activityId === activity.id,
-          )
+          .filter((item) => ["SUBMITTED", "LEADER_CONFIRMED"].includes(item.status) && item.activityId === activity.id)
           .map((item) => item.participationDate || todayInSeoul()),
       ),
     [activity.id, applications],
@@ -89,14 +85,14 @@ export function ParticipationForm({
   if (!user)
     return (
       <div className="p-6 text-center">
-        <LogIn className="mx-auto text-brand-700" size={40} />
+        <LogIn className="mx-auto text-brand-800" size={40} />
         <h3 className="mt-4 text-xl font-bold">로그인 후 신청할 수 있습니다</h3>
         <p className="mt-2 text-sm leading-6 text-gray-600">
           로그인을 마치면 선택한 봉사활동 신청 화면으로 돌아옵니다.
         </p>
         <button
           onClick={() => openLogin(loginReturnUrl ?? `/volunteer?activity=${activity.id}`)}
-          className="mt-5 inline-flex h-11 items-center gap-2 rounded-md bg-brand-700 px-5 text-sm font-bold text-white"
+          className="mt-5 inline-flex h-10 items-center gap-2 rounded-md bg-brand-400 px-5 text-sm font-bold text-darkness hover:bg-brand-500"
         >
           <LogIn size={17} />
           로그인
@@ -199,7 +195,7 @@ export function ParticipationForm({
                 value={value}
                 checked={form.participationType === value}
                 onChange={() => set("participationType", value)}
-                className="mt-0.5 h-5 w-5 shrink-0 accent-brand-600"
+                className="mt-0.5 h-5 w-5 shrink-0 accent-brand-400"
               />
               <span>
                 <strong className="block text-sm text-gray-900">{label}</strong>
@@ -224,7 +220,7 @@ export function ParticipationForm({
         <input
           required
           type="checkbox"
-          className="mt-0.5 h-5 w-5 shrink-0 accent-brand-600"
+          className="mt-0.5 h-5 w-5 shrink-0 accent-brand-400"
           checked={agreed}
           onChange={(event) => setAgreed(event.target.checked)}
         />
@@ -238,7 +234,7 @@ export function ParticipationForm({
       <FormError message={error} />
       <button
         disabled={!agreed || duplicated || submitting || !activity.isAcceptingApplications}
-        className="h-12 w-full rounded-md bg-brand-600 font-bold text-white disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
+        className="h-12 w-full rounded-md bg-brand-400 font-bold text-darkness disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400 hover:bg-brand-500"
       >
         {submitting ? "신청 접수 중..." : duplicated ? "이미 신청한 활동" : "신청하기"}
       </button>

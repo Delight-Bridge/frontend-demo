@@ -38,7 +38,7 @@ export function UploaderPage() {
             <h1 className="text-2xl font-bold">팀장 로그인이 필요합니다</h1>
             <button
               onClick={() => openLogin("/uploader")}
-              className="mt-5 rounded-md bg-gray-900 px-5 py-3 font-bold text-white"
+              className="mt-5 rounded-md bg-darkness px-5 py-3 font-bold text-white"
             >
               로그인
             </button>
@@ -66,9 +66,9 @@ export function UploaderPage() {
   return (
     <>
       <SiteHeader />
-      <main id="main-content" className="min-h-[75vh] bg-gray-50 px-4 py-10 md:px-8">
+      <main id="main-content" className="min-h-[75vh] bg-brand-50 px-4 py-10 md:px-8">
         <div className="mx-auto max-w-5xl">
-          <p className="text-xs font-bold tracking-widest text-brand-700">TEAM LEADER</p>
+          <p className="text-xs font-bold tracking-widest text-brand-800">TEAM LEADER</p>
           <h1 className="mt-2 text-3xl font-bold">담당 팀 신청자</h1>
           <p className="mt-3 text-sm text-gray-500">담당 팀의 승인 대기 및 승인 완료 신청이 표시됩니다.</p>
           {error && (
@@ -81,7 +81,7 @@ export function UploaderPage() {
               <article key={application.id} className="rounded-lg border bg-white p-5">
                 <div className="flex flex-wrap justify-between gap-3">
                   <div>
-                    <p className="text-xs font-bold text-brand-700">{application.team?.name}</p>
+                    <p className="text-xs font-bold text-brand-800">{application.team?.name}</p>
                     <h2 className="mt-1 font-bold">
                       {application.applicantName} · {application.activity?.title ?? "봉사 신청"}
                     </h2>

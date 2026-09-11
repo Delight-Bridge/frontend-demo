@@ -75,7 +75,7 @@ export function TeamApplicantsPage() {
 
   return (
     <div className="rounded-lg border bg-white p-5 md:p-7">
-      <p className="text-xs font-bold tracking-widest text-brand-700">TEAM APPLICANTS</p>
+      <p className="text-xs font-bold tracking-widest text-brand-800">TEAM APPLICANTS</p>
       <h2 className="mt-2 text-2xl font-bold text-gray-950">{team?.name ?? "담당 팀"} 신청자 관리</h2>
       <p className="mt-2 text-sm text-gray-500">담당 팀의 신청자를 확인하고 참여를 승인할 수 있습니다.</p>
       {error && (
@@ -102,7 +102,7 @@ export function TeamApplicantsPage() {
                   <td className="px-4 py-4 text-center text-gray-500">{(page - 1) * pageSize + index + 1}</td>
                   <td className="px-4 py-4 font-bold text-gray-950">{application.applicantName}</td>
                   <td className="px-4 py-4">
-                    <a href={`tel:${application.phone}`} className="hover:text-brand-700">
+                    <a href={`tel:${application.phone}`} className="hover:text-brand-800">
                       {application.phone}
                     </a>
                   </td>
@@ -115,7 +115,7 @@ export function TeamApplicantsPage() {
                       <button
                         type="button"
                         onClick={() => void updateStatus(application, "LEADER_CONFIRMED")}
-                        className="mx-auto mt-2 flex h-9 items-center justify-center gap-1.5 rounded-md bg-brand-700 px-3 text-xs font-bold text-white"
+                        className="mx-auto mt-2 flex h-9 items-center justify-center gap-1.5 rounded-md bg-brand-400 px-3 text-xs font-bold text-darkness hover:bg-brand-500"
                       >
                         <Check size={14} />
                         팀장 승인
@@ -153,7 +153,7 @@ export function TeamApplicantsPage() {
           type="button"
           onClick={() => void copyInviteLink()}
           disabled={!team?.kakaoInviteUrl}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-[#FEE500] px-5 text-sm font-bold text-[#191919] hover:bg-[#f5dc00] disabled:opacity-40"
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-[#FEE500] px-5 text-sm font-bold text-[#191919] hover:bg-[#f5dc00] disabled:opacity-40"
         >
           {copied ? <Check size={17} /> : <Copy size={17} />}
           {copied ? "초대 링크가 복사되었습니다" : "카카오톡 단체방 초대 링크 복사하기"}

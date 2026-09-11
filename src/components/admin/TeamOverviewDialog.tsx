@@ -117,7 +117,7 @@ export function TeamOverviewDialog({
                 type="button"
                 onClick={() => void addMember()}
                 disabled={!selectedUserId}
-                className="flex h-10 shrink-0 items-center gap-2 rounded-md bg-gray-900 px-3 text-sm font-bold text-white disabled:opacity-40"
+                className="flex h-10 shrink-0 items-center gap-2 rounded-md bg-brand-400 px-3 text-sm font-bold text-darkness disabled:opacity-40 hover:bg-brand-500"
               >
                 <UserPlus size={16} />
                 추가
@@ -159,7 +159,7 @@ export function TeamOverviewDialog({
             <button
               type="button"
               onClick={() => setEditingPost("new")}
-              className="flex h-10 items-center gap-2 rounded-md bg-brand-700 px-3 text-sm font-bold text-white"
+              className="flex h-10 items-center gap-2 rounded-md bg-brand-400 px-3 text-sm font-bold text-darkness hover:bg-brand-500"
             >
               <Plus size={16} />
               게시물 등록
@@ -174,7 +174,7 @@ export function TeamOverviewDialog({
                     <div>
                       <p className="text-sm font-bold">{post.title}</p>
                       <p
-                        className={`mt-1 flex items-center gap-1 text-xs ${post.isVisible ? "text-brand-700" : "text-gray-400"}`}
+                        className={`mt-1 flex items-center gap-1 text-xs ${post.isVisible ? "text-brand-800" : "text-gray-400"}`}
                       >
                         {post.isVisible ? <Eye size={13} /> : <EyeOff size={13} />}
                         {post.isVisible ? "공개" : "비공개"}

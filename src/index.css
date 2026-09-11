@@ -8,7 +8,7 @@
   }
 
   body {
-    @apply overflow-x-hidden bg-gray-50 font-sans text-gray-800 antialiased;
+    @apply overflow-x-hidden bg-brand-50 font-sans leading-6 text-gray-900 antialiased;
   }
 
   * {
@@ -69,6 +69,12 @@
   }
 }
 
+@layer components {
+  .content-page {
+    @apply min-h-[75vh] bg-brand-50 px-4 py-14 text-gray-900 md:px-8 md:py-20;
+  }
+}
+
 @layer utilities {
   .hide-scrollbar {
     -ms-overflow-style: none;
@@ -107,6 +113,6 @@
 
   .hero-bg {
     background-color: #111111;
-    background-image: radial-gradient(circle at center, rgb(20 184 166 / 15%) 0%, rgb(17 17 17) 60%);
+    background-image: radial-gradient(circle at center, rgb(255 201 74 / 16%) 0%, rgb(17 17 17) 65%);
   }
 }

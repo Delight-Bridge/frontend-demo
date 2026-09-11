@@ -68,7 +68,7 @@ export function TestimonyDetail({
           )}
           <div className="p-5 md:p-7">
             <div className="mb-6 flex items-center gap-3">
-              <span className="grid h-10 w-10 place-items-center rounded-full bg-brand-600 font-bold text-white">
+              <span className="grid h-10 w-10 place-items-center rounded-full bg-brand-100 font-bold text-brand-800">
                 {post.author.nickname.slice(0, 1)}
               </span>
               <div>
@@ -99,7 +99,9 @@ export function TestimonyDetail({
                   onChange={(e) => setComment(e.target.value)}
                   placeholder="댓글을 입력하세요"
                 />
-                <button className="shrink-0 rounded-md bg-gray-900 px-4 text-sm font-bold text-white">등록</button>
+                <button className="shrink-0 rounded-md bg-brand-400 px-4 text-sm font-bold text-darkness hover:bg-brand-500">
+                  등록
+                </button>
               </form>
             ) : (
               <button

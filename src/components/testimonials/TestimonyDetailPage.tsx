@@ -74,7 +74,7 @@ export function TestimonyDetailPage() {
   return (
     <>
       <SiteHeader />
-      <main id="main-content" className="min-h-[75vh] bg-gray-50 px-4 py-10 md:px-8 md:py-14">
+      <main id="main-content" className="min-h-[75vh] bg-brand-50 px-4 py-10 md:px-8 md:py-14">
         <div className="mx-auto max-w-4xl">
           <PageBreadcrumb
             items={[{ label: "회복 간증", href: "/testimony" }, { label: post?.title ?? "간증 상세" }]}
@@ -98,7 +98,7 @@ export function TestimonyDetailPage() {
               </p>
               <a
                 href="/testimony"
-                className="mt-5 inline-flex rounded-md bg-gray-900 px-5 py-3 text-sm font-bold text-white"
+                className="mt-5 inline-flex rounded-md bg-darkness px-5 py-3 text-sm font-bold text-white"
               >
                 글 목록 보기
               </a>
@@ -107,7 +107,7 @@ export function TestimonyDetailPage() {
           {post && (
             <article className="mt-8 overflow-hidden rounded-lg border bg-white">
               <header className="border-b px-5 py-6 md:px-8">
-                <p className="text-sm font-bold text-brand-700">{post.team?.name ?? "함께하는 사역"}</p>
+                <p className="text-sm font-bold text-brand-800">{post.team?.name ?? "함께하는 사역"}</p>
                 <h1 className="mt-3 font-serif text-2xl font-bold leading-tight text-gray-950 md:text-3xl">
                   {post.title}
                 </h1>
@@ -150,7 +150,9 @@ export function TestimonyDetailPage() {
                       onChange={(event) => setComment(event.target.value)}
                       placeholder="댓글을 입력하세요"
                     />
-                    <button className="shrink-0 rounded-md bg-gray-900 px-4 text-sm font-bold text-white">등록</button>
+                    <button className="shrink-0 rounded-md bg-brand-400 px-4 text-sm font-bold text-darkness hover:bg-brand-500">
+                      등록
+                    </button>
                   </form>
                 ) : (
                   <button

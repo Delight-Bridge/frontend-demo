@@ -107,7 +107,7 @@ export function AdminDashboard({ onNavigate }: { onNavigate: (tab: "members" | "
           <button
             type="button"
             onClick={downloadReport}
-            className="inline-flex h-10 items-center gap-2 rounded-md bg-gray-900 px-4 text-sm font-bold text-white"
+            className="inline-flex h-10 items-center gap-2 rounded-md bg-darkness px-4 text-sm font-bold text-white"
             aria-label={`${reportMonth} 샘플 운영 보고서 다운로드`}
           >
             <Download size={17} />
@@ -119,7 +119,7 @@ export function AdminDashboard({ onNavigate }: { onNavigate: (tab: "members" | "
         <button
           type="button"
           onClick={() => onNavigate("members")}
-          className="group relative min-h-32 overflow-hidden rounded-md border bg-white p-5 text-left hover:border-brand-500 focus-visible:border-brand-500"
+          className="group relative min-h-32 overflow-hidden rounded-md border bg-white p-5 text-left hover:border-brand-500 focus-visible:border-brand-600"
           aria-label={`회원 현황, 누적 ${stats?.cumulativeUsers ?? 0}명, 활성 ${stats?.activeUsers ?? 0}명, 탈퇴 ${stats?.withdrawnUsers ?? 0}명`}
         >
           <span className="flex items-start justify-between transition-opacity group-hover:opacity-0 group-focus-visible:opacity-0">
@@ -128,25 +128,25 @@ export function AdminDashboard({ onNavigate }: { onNavigate: (tab: "members" | "
               <strong className="mt-3 block text-3xl text-gray-950">{stats?.cumulativeUsers ?? 0}</strong>
               <span className="mt-2 block text-xs text-gray-500">마우스를 올려 상세 보기</span>
             </span>
-            <span className="grid h-10 w-10 place-items-center rounded-md bg-brand-50 text-brand-700">
+            <span className="grid h-10 w-10 place-items-center rounded-md bg-brand-50 text-brand-800">
               <Users size={20} />
             </span>
           </span>
-          <span className="absolute inset-0 grid grid-cols-3 items-center gap-1 bg-brand-900 px-3 text-center text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+          <span className="absolute inset-0 grid grid-cols-3 items-center gap-1 bg-darkness px-3 text-center text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
             <span>
-              <Users className="mx-auto text-brand-200" size={18} />
+              <Users className="mx-auto text-gray-300" size={18} />
               <strong className="mt-1 block text-xl">{stats?.cumulativeUsers ?? 0}</strong>
-              <span className="block text-[11px] text-brand-100">누적 회원</span>
+              <span className="block text-[11px] text-gray-300">누적 회원</span>
             </span>
-            <span className="border-x border-brand-700 px-1">
-              <UserRoundCheck className="mx-auto text-brand-200" size={18} />
+            <span className="border-x border-brand-400/35 px-1">
+              <UserRoundCheck className="mx-auto text-gray-300" size={18} />
               <strong className="mt-1 block text-xl">{stats?.activeUsers ?? 0}</strong>
-              <span className="block text-[11px] text-brand-100">활성 회원</span>
+              <span className="block text-[11px] text-gray-300">활성 회원</span>
             </span>
             <span>
-              <UserMinus className="mx-auto text-brand-200" size={18} />
+              <UserMinus className="mx-auto text-gray-300" size={18} />
               <strong className="mt-1 block text-xl">{stats?.withdrawnUsers ?? 0}</strong>
-              <span className="block text-[11px] text-brand-100">탈퇴 회원</span>
+              <span className="block text-[11px] text-gray-300">탈퇴 회원</span>
             </span>
           </span>
         </button>
@@ -161,7 +161,7 @@ export function AdminDashboard({ onNavigate }: { onNavigate: (tab: "members" | "
               <strong className="mt-3 block text-3xl text-gray-950">{value}</strong>
               <span className="mt-2 block text-xs text-gray-500">{hint}</span>
             </span>
-            <span className="grid h-10 w-10 place-items-center rounded-md bg-brand-50 text-brand-700">
+            <span className="grid h-10 w-10 place-items-center rounded-md bg-brand-50 text-brand-800">
               <Icon size={20} />
             </span>
           </button>
@@ -173,7 +173,7 @@ export function AdminDashboard({ onNavigate }: { onNavigate: (tab: "members" | "
             <h3 className="font-bold">최근 봉사 신청</h3>
             <p className="mt-1 text-xs text-gray-500">최근 접수 순서로 최대 5건을 표시합니다.</p>
           </div>
-          <button onClick={() => onNavigate("applications")} className="text-sm font-bold text-brand-700">
+          <button onClick={() => onNavigate("applications")} className="text-sm font-bold text-brand-800">
             전체 보기
           </button>
         </div>

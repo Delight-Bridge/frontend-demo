@@ -24,7 +24,7 @@ export function ParticipationDialog({
         data-testid="participation-dialog-scroll"
       >
         <div className="border-b bg-gray-50 p-5 md:p-6">
-          <p className="text-xs font-bold text-brand-700">{activity.team?.name}</p>
+          <p className="text-xs font-bold text-brand-800">{activity.team?.name}</p>
           <dl className="mt-4 grid gap-4 text-sm md:grid-cols-2">
             <div>
               <dt className="font-bold">비전</dt>

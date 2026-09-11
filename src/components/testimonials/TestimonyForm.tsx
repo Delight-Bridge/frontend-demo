@@ -74,7 +74,7 @@ export function TestimonyForm({
         <FormError message={error} />
         <button
           disabled={saving}
-          className="h-12 w-full rounded-md bg-brand-600 font-bold text-white disabled:opacity-50"
+          className="h-12 w-full rounded-md bg-brand-400 font-bold text-darkness disabled:opacity-40 hover:bg-brand-500"
         >
           {saving ? "저장 중..." : "간증 저장"}
         </button>

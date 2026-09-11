@@ -48,7 +48,7 @@ export function TeamContentPage() {
     <div className="rounded-lg border bg-white p-5 md:p-7">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-bold tracking-widest text-brand-700">TEAM CONTENT</p>
+          <p className="text-xs font-bold tracking-widest text-brand-800">TEAM CONTENT</p>
           <h2 className="mt-2 text-2xl font-bold text-gray-950">팀 소개/게시물 업로드</h2>
           <p className="mt-2 text-sm text-gray-500">담당 팀 소개를 수정하고 사역 현장 게시물을 관리하세요.</p>
         </div>
@@ -69,7 +69,7 @@ export function TeamContentPage() {
       )}
       {team && (
         <section className="mt-6 rounded-lg bg-gray-50 p-5">
-          <p className="text-xs font-bold text-brand-700">담당 팀</p>
+          <p className="text-xs font-bold text-brand-800">담당 팀</p>
           <h3 className="mt-1 text-lg font-bold text-gray-950">{team.name}</h3>
           <p className="mt-2 text-sm leading-6 text-gray-600">{team.shortDescription}</p>
           <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
@@ -94,7 +94,7 @@ export function TeamContentPage() {
             type="button"
             onClick={() => setEditingPost("new")}
             disabled={!team}
-            className="flex h-10 items-center gap-2 rounded-md bg-brand-700 px-4 text-sm font-bold text-white disabled:opacity-40"
+            className="flex h-10 items-center gap-2 rounded-md bg-brand-400 px-4 text-sm font-bold text-darkness disabled:opacity-40 hover:bg-brand-500"
           >
             <Plus size={16} />
             게시물 업로드
@@ -109,7 +109,7 @@ export function TeamContentPage() {
                   <div className="min-w-0">
                     <h4 className="truncate font-bold text-gray-950">{post.title}</h4>
                     <p
-                      className={`mt-1 flex items-center gap-1 text-xs ${post.isVisible ? "text-brand-700" : "text-gray-400"}`}
+                      className={`mt-1 flex items-center gap-1 text-xs ${post.isVisible ? "text-brand-800" : "text-gray-400"}`}
                     >
                       {post.isVisible ? <Eye size={13} /> : <EyeOff size={13} />}
                       {post.isVisible ? "공개" : "비공개"}

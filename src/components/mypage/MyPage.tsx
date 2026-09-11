@@ -32,16 +32,16 @@ export function MyPage() {
     return (
       <>
         <SiteHeader />
-        <main className="grid min-h-[70vh] place-items-center bg-gray-50 p-5">
+        <main className="grid min-h-[70vh] place-items-center bg-brand-50 p-5">
           <div className="w-full max-w-md rounded-lg border bg-white p-8 text-center">
-            <LogIn className="mx-auto text-brand-700" size={34} />
+            <LogIn className="mx-auto text-brand-800" size={34} />
             <h1 className="mt-5 text-2xl font-bold">로그인이 필요합니다</h1>
             <p className="mt-3 text-sm leading-6 text-gray-500">
               내 정보와 신청 내역은 로그인한 회원만 확인할 수 있습니다.
             </p>
             <button
               onClick={() => openLogin(`${window.location.pathname}${window.location.search}`)}
-              className="mt-6 h-11 w-full rounded-md bg-gray-900 font-bold text-white"
+              className="mt-6 h-10 w-full rounded-md bg-darkness font-bold text-white"
             >
               로그인
             </button>
@@ -68,14 +68,14 @@ export function MyPage() {
   return (
     <>
       <SiteHeader />
-      <main id="main-content" className="min-h-[75vh] bg-gray-50 px-4 py-10 md:px-8 md:py-14">
+      <main id="main-content" className="min-h-[75vh] bg-brand-50 px-4 py-10 md:px-8 md:py-14">
         <div className="mx-auto max-w-6xl">
           <PageBreadcrumb
             items={[{ label: "마이페이지", href: "/mypage/profile" }, { label: currentTab?.label ?? "내 정보 수정" }]}
             className="mb-7"
           />
           <div>
-            <p className="text-xs font-bold tracking-widest text-brand-700">MY PAGE</p>
+            <p className="text-xs font-bold tracking-widest text-brand-800">MY PAGE</p>
             <h1 className="mt-2 text-3xl font-bold">마이페이지</h1>
             <p className="mt-3 text-sm text-gray-500">
               {user.role === "AUTHORIZED_UPLOADER"
@@ -93,7 +93,7 @@ export function MyPage() {
                   key={to}
                   to={to}
                   className={({ isActive }) =>
-                    `flex min-h-11 shrink-0 items-center gap-3 rounded-md px-3 py-2 text-sm font-bold ${isActive ? "bg-gray-900 text-white" : "text-gray-600 hover:bg-gray-100"}`
+                    `flex min-h-11 shrink-0 items-center gap-3 rounded-md px-3 py-2 text-sm font-bold ${isActive ? "bg-darkness text-white" : "text-gray-600 hover:bg-gray-100"}`
                   }
                 >
                   <Icon size={17} className="shrink-0" />

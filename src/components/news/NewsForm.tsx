@@ -112,7 +112,7 @@ export function NewsForm({
         <FormError message={error} />
         <button
           disabled={saving}
-          className="h-11 w-full rounded-md bg-gray-900 text-sm font-bold text-white disabled:opacity-50"
+          className="h-10 w-full rounded-md bg-brand-400 text-sm font-bold text-darkness disabled:opacity-40 hover:bg-brand-500"
         >
           {saving ? "저장 중..." : "저장"}
         </button>

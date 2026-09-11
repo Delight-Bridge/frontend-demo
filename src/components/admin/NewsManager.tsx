@@ -47,7 +47,7 @@ export function NewsManager() {
         </div>
         <button
           onClick={() => setEditing("new")}
-          className="flex h-10 shrink-0 items-center gap-2 rounded-md bg-gray-900 px-4 text-sm font-bold text-white"
+          className="flex h-10 shrink-0 items-center gap-2 rounded-md bg-brand-400 px-4 text-sm font-bold text-darkness hover:bg-brand-500"
         >
           <Plus size={17} />
           뉴스 업로드
@@ -80,7 +80,7 @@ export function NewsManager() {
               </div>
               <button
                 onClick={() => void toggleVisibility(article)}
-                className={`flex h-9 items-center justify-center gap-2 rounded-md border px-3 text-xs font-bold ${article.isVisible ? "text-brand-700" : "text-gray-500"}`}
+                className={`flex h-9 items-center justify-center gap-2 rounded-md border px-3 text-xs font-bold ${article.isVisible ? "text-brand-800" : "text-gray-500"}`}
               >
                 {article.isVisible ? <Eye size={15} /> : <EyeOff size={15} />}
                 {article.isVisible ? "공개 중" : "비공개"}

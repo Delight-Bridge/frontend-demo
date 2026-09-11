@@ -85,7 +85,10 @@ export function CommentItem({
             >
               취소
             </button>
-            <button onClick={() => void save()} className="rounded bg-gray-900 px-3 py-2 text-xs font-bold text-white">
+            <button
+              onClick={() => void save()}
+              className="rounded bg-brand-400 px-3 py-2 text-xs font-bold text-darkness hover:bg-brand-500"
+            >
               저장
             </button>
           </div>

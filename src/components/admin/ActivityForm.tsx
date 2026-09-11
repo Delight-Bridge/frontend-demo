@@ -164,7 +164,7 @@ export function ActivityForm({
           <FormError message={error} />
           <button
             disabled={saving}
-            className="mt-3 h-11 w-full rounded-md bg-gray-900 font-bold text-white disabled:opacity-50"
+            className="mt-3 h-10 w-full rounded-md bg-brand-400 font-bold text-darkness disabled:opacity-40 hover:bg-brand-500"
           >
             {saving ? "저장 중..." : "봉사활동 저장"}
           </button>

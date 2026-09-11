@@ -156,7 +156,7 @@ export function GalleryForm({
               ))}
             </div>
           )}
-          <label className="flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-md border border-dashed border-gray-300 px-4 text-sm font-bold text-gray-600 hover:border-brand-500 hover:text-brand-700">
+          <label className="flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-md border border-dashed border-gray-300 px-4 text-sm font-bold text-gray-600 hover:border-brand-500 hover:text-brand-800">
             <ImagePlus size={18} />
             {uploading ? "이미지 업로드 중..." : "이미지 선택 (여러 장 가능)"}
             <input
@@ -211,7 +211,7 @@ export function GalleryForm({
         <FormError message={error} />
         <button
           disabled={saving || uploading}
-          className="h-11 w-full rounded-md bg-gray-900 text-sm font-bold text-white disabled:opacity-50"
+          className="h-10 w-full rounded-md bg-darkness text-sm font-bold text-white disabled:opacity-40"
         >
           {saving ? "저장 중..." : "저장"}
         </button>

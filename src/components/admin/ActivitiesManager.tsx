@@ -44,7 +44,7 @@ export function ActivitiesManager() {
         <button
           onClick={() => setEditing("new")}
           disabled={!teams.length}
-          className="flex h-10 items-center gap-2 rounded-md bg-gray-900 px-4 text-sm font-bold text-white disabled:opacity-40"
+          className="flex h-10 items-center gap-2 rounded-md bg-brand-400 px-4 text-sm font-bold text-darkness disabled:opacity-40 hover:bg-brand-500"
         >
           <Plus size={17} />
           활동 등록
@@ -65,7 +65,7 @@ export function ActivitiesManager() {
               <div>
                 <div className="flex items-center gap-2">
                   <h4 className="text-sm font-bold">{activity.title}</h4>
-                  <span className={activity.isVisible ? "text-brand-700" : "text-gray-400"}>
+                  <span className={activity.isVisible ? "text-brand-800" : "text-gray-400"}>
                     {activity.isVisible ? <Eye size={14} /> : <EyeOff size={14} />}
                   </span>
                 </div>

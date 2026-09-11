@@ -31,7 +31,7 @@ export function NewsDetailPage() {
   return (
     <>
       <SiteHeader />
-      <main id="main-content" className="min-h-[75vh] bg-gray-50 px-4 py-10 md:px-8 md:py-14">
+      <main id="main-content" className="min-h-[75vh] bg-brand-50 px-4 py-10 md:px-8 md:py-14">
         <div className="mx-auto max-w-4xl">
           <PageBreadcrumb
             items={[{ label: "우리 곁의 아픔", href: "/news" }, { label: article?.title ?? "기사 상세" }]}
@@ -56,7 +56,7 @@ export function NewsDetailPage() {
               </p>
               <a
                 href="/news"
-                className="mt-5 inline-flex rounded-md bg-gray-900 px-5 py-3 text-sm font-bold text-white"
+                className="mt-5 inline-flex rounded-md bg-darkness px-5 py-3 text-sm font-bold text-white"
               >
                 기사 목록 보기
               </a>
@@ -69,7 +69,7 @@ export function NewsDetailPage() {
               </div>
               <div className="p-6 md:p-10">
                 <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500">
-                  <span className="font-bold text-brand-700">{article.sourceName || "출처 미상"}</span>
+                  <span className="font-bold text-brand-800">{article.sourceName || "출처 미상"}</span>
                   <span aria-hidden="true">·</span>
                   <time dateTime={article.publishedAt}>{article.publishedAt}</time>
                 </div>
@@ -88,7 +88,7 @@ export function NewsDetailPage() {
                     href={article.sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex h-11 items-center gap-2 rounded-md bg-gray-900 px-5 text-sm font-bold text-white hover:bg-gray-700"
+                    className="inline-flex h-11 items-center gap-2 rounded-md bg-darkness px-5 text-sm font-bold text-white hover:bg-gray-700"
                   >
                     원문 보기
                     <ExternalLink size={16} />

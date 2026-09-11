@@ -79,7 +79,7 @@ export function ApplicationEditDialog({
           </button>
           <button
             disabled={saving}
-            className="h-10 rounded-md bg-gray-900 px-4 text-sm font-bold text-white disabled:opacity-50"
+            className="h-10 rounded-md bg-darkness px-4 text-sm font-bold text-white disabled:opacity-40"
           >
             {saving ? "저장 중..." : "변경 저장"}
           </button>

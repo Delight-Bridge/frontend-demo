@@ -109,7 +109,7 @@ export function MinistryModal({
             <button
               type="button"
               onClick={onPrevious}
-              className="absolute left-5 top-1/2 z-30 hidden h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white text-gray-900 shadow-xl transition hover:scale-105 hover:bg-gray-100 xl:grid"
+              className="absolute left-5 top-1/2 z-30 hidden h-10 w-11 -translate-y-1/2 place-items-center rounded-full bg-white text-gray-900 shadow-xl transition hover:scale-105 hover:bg-gray-100 xl:grid"
               aria-label="이전 사역 게시물"
             >
               <ChevronLeft size={24} />
@@ -119,7 +119,7 @@ export function MinistryModal({
             <button
               type="button"
               onClick={onNext}
-              className="absolute right-5 top-1/2 z-30 hidden h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white text-gray-900 shadow-xl transition hover:scale-105 hover:bg-gray-100 xl:grid"
+              className="absolute right-5 top-1/2 z-30 hidden h-10 w-11 -translate-y-1/2 place-items-center rounded-full bg-white text-gray-900 shadow-xl transition hover:scale-105 hover:bg-gray-100 xl:grid"
               aria-label="다음 사역 게시물"
             >
               <ChevronRight size={24} />
@@ -185,7 +185,7 @@ export function MinistryModal({
 
         <div className="flex min-h-[520px] flex-col lg:max-h-[72vh] lg:min-h-[640px]">
           <div className="flex items-center gap-3 border-b px-5 py-4">
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-700 text-sm font-bold text-white">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-100 text-sm font-bold text-brand-800">
               {current.team?.name?.slice(0, 1) ?? "사"}
             </span>
             <div className="min-w-0">
@@ -274,7 +274,7 @@ export function MinistryModal({
             <button
               type="submit"
               disabled={submitting || (Boolean(user) && !comment.trim())}
-              className="grid h-9 w-9 shrink-0 place-items-center text-brand-700 disabled:text-gray-300"
+              className="grid h-9 w-9 shrink-0 place-items-center text-brand-800 disabled:text-gray-300"
               aria-label={user ? "댓글 게시" : "로그인하고 댓글 달기"}
             >
               <Send size={20} />
