@@ -10,6 +10,7 @@ import { Pagination } from "../common/Pagination";
 import { NewsForm } from "./NewsForm";
 import { PageBreadcrumb } from "../common/PageBreadcrumb";
 import { NewsCard } from "./NewsCard";
+import { filterNews, NewsSearch } from "./NewsSearch";
 
 const pageSize = 10;
 
@@ -21,6 +22,7 @@ export function NewsListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
+  const [query, setQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
 
   const load = useCallback(async () => {
@@ -39,9 +41,10 @@ export function NewsListPage() {
     void load();
   }, [load]);
 
-  const totalPages = Math.max(1, Math.ceil(articles.length / pageSize));
+  const filteredArticles = filterNews(articles, query);
+  const totalPages = Math.max(1, Math.ceil(filteredArticles.length / pageSize));
   const currentPage = Math.min(page, totalPages);
-  const pageArticles = articles.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const pageArticles = filteredArticles.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
@@ -95,6 +98,14 @@ export function NewsListPage() {
           )}
           {!loading && (
             <section className="mt-10" aria-label="기사 목록">
+              <NewsSearch
+                query={query}
+                onChange={(value) => {
+                  setQuery(value);
+                  setPage(1);
+                }}
+                count={error ? undefined : filteredArticles.length}
+              />
               <div className="mb-4 flex justify-end">
                 <div className="inline-flex rounded-md border bg-white p-1" role="group" aria-label="기사 보기 방식">
                   <button
@@ -131,7 +142,7 @@ export function NewsListPage() {
                       {pageArticles.map((article, index) => (
                         <tr key={article.id} className="text-gray-700 hover:bg-gray-50">
                           <td className="px-4 py-5 text-center text-gray-500">
-                            {articles.length - ((currentPage - 1) * pageSize + index)}
+                            {filteredArticles.length - ((currentPage - 1) * pageSize + index)}
                           </td>
                           <td className="px-5 py-5">
                             <a
@@ -179,10 +190,12 @@ export function NewsListPage() {
                           )}
                         </tr>
                       ))}
-                      {!articles.length && (
+                      {!filteredArticles.length && (
                         <tr>
                           <td colSpan={admin ? 5 : 4} className="h-56 text-center text-gray-500">
-                            등록된 기사가 없습니다.
+                            {query.trim()
+                              ? "검색 결과가 없습니다. 다른 제목이나 출처로 검색해 주세요."
+                              : "등록된 기사가 없습니다."}
                           </td>
                         </tr>
                       )}
@@ -203,13 +216,15 @@ export function NewsListPage() {
                 </div>
               ) : (
                 <div className="grid h-56 place-items-center rounded-lg border bg-white text-sm text-gray-500">
-                  등록된 기사가 없습니다.
+                  {query.trim()
+                    ? "검색 결과가 없습니다. 다른 제목이나 출처로 검색해 주세요."
+                    : "등록된 기사가 없습니다."}
                 </div>
               )}
               <Pagination
                 page={currentPage}
                 totalPages={totalPages}
-                totalItems={articles.length}
+                totalItems={filteredArticles.length}
                 onPageChange={setPage}
               />
             </section>
