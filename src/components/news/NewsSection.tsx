@@ -15,7 +15,16 @@ export function NewsSection() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
-  const pageSize = 3;
+  const [pageSize, setPageSize] = useState(() => (window.matchMedia("(min-width: 1024px)").matches ? 3 : 4));
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const updatePageSize = () => {
+      setPageSize(desktop.matches ? 3 : 4);
+      setPage(0);
+    };
+    desktop.addEventListener("change", updatePageSize);
+    return () => desktop.removeEventListener("change", updatePageSize);
+  }, []);
   const load = useCallback(async () => {
     try {
       setLoading(true);
@@ -73,22 +82,22 @@ export function NewsSection() {
             소식을 불러오는 중입니다.
           </p>
         )}
-        {!loading && !articles.length && (
+        {!loading && !error && !articles.length && (
           <p className="py-16 text-center text-sm text-white/70">등록된 소식이 없습니다.</p>
         )}
         {!loading && articles.length > 0 && (
-          <div className="flex items-center gap-3 md:gap-5">
+          <div className="grid grid-cols-2 items-center gap-3 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-5">
             <button
               type="button"
               onClick={() => setPage((current) => Math.max(0, current - 1))}
               disabled={page === 0}
-              className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/30 bg-white/10 text-white transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-30"
-              aria-label="이전 뉴스 3개 보기"
+              className="order-2 grid h-11 w-11 justify-self-end place-items-center rounded-full border border-white/30 bg-white/10 text-white transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-30 lg:order-1"
+              aria-label={`이전 뉴스 ${pageSize}개 보기`}
             >
               <ChevronLeft size={24} aria-hidden="true" />
             </button>
             <div
-              className="grid min-w-0 flex-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+              className="order-1 col-span-2 grid min-w-0 grid-cols-2 gap-3 sm:gap-5 lg:order-2 lg:col-span-1 lg:grid-cols-3"
               role="region"
               aria-label={`우리 곁의 아픔 뉴스 ${page + 1}/${totalPages} 페이지`}
               aria-live="polite"
@@ -107,8 +116,8 @@ export function NewsSection() {
               type="button"
               onClick={() => setPage((current) => Math.min(totalPages - 1, current + 1))}
               disabled={page >= totalPages - 1}
-              className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/30 bg-white/10 text-white transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-30"
-              aria-label="다음 뉴스 3개 보기"
+              className="order-3 grid h-11 w-11 justify-self-start place-items-center rounded-full border border-white/30 bg-white/10 text-white transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-30"
+              aria-label={`다음 뉴스 ${pageSize}개 보기`}
             >
               <ChevronRight size={24} aria-hidden="true" />
             </button>
