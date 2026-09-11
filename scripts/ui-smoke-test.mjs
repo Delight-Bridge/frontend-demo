@@ -65,7 +65,7 @@ try {
   await page.getByText("운영 관리자", { exact: true }).first().waitFor();
   await page.goto(`${process.env.APP_URL}/admin`, { waitUntil: "domcontentloaded" });
   await page.getByRole("heading", { name: "대시보드" }).waitFor();
-  await page.getByText("전체 회원", { exact: true }).waitFor();
+  await page.getByRole("button", { name: /^회원 현황, 누적/ }).waitFor();
   await page.goto(`${process.env.APP_URL}/volunteer?activity=activity-1`, { waitUntil: "domcontentloaded" });
   await page.getByTestId("participation-dialog-scroll").waitFor();
   const participationStyles = await page.evaluate(() => {
