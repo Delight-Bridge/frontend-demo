@@ -41,7 +41,7 @@ export function CommentItem({
     <li className="border-t py-4 first:border-t-0">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-bold">{comment.author?.nickname}</p>
+          <p className="text-sm font-bold">{comment.author?.name}</p>
           <time className="text-xs text-gray-400">
             {new Date(comment.createdAt).toLocaleString("ko-KR")}
             {comment.updatedAt !== comment.createdAt && " · 수정됨"}

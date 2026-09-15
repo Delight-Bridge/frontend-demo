@@ -164,7 +164,7 @@ export function MembersManager() {
                         {member.status === "ACTIVE" ? <UserRoundCheck size={19} /> : <UserRoundX size={19} />}
                       </span>
                       <div className="min-w-0">
-                        <p className="truncate font-bold text-gray-950">{member.name || member.nickname}</p>
+                        <p className="truncate font-bold text-gray-950">{member.name}</p>
                         <p className="mt-1 text-xs text-gray-500">
                           {member.socialProvider || "소셜 미연결"} · 가입{" "}
                           {new Date(member.createdAt).toLocaleDateString("ko-KR")}
@@ -179,7 +179,7 @@ export function MembersManager() {
                       value={member.ministryTeamId ?? ""}
                       onClick={(event) => event.stopPropagation()}
                       onChange={(event) => void updateUser(member.id, { ministryTeamId: event.target.value || null })}
-                      aria-label={`${member.name || member.nickname} 소속 팀`}
+                      aria-label={`${member.name} 소속 팀`}
                     >
                       <option value="">소속 없음</option>
                       {teams.map((team) => (
@@ -230,7 +230,7 @@ export function MembersManager() {
                             : { role: position as Role, teamPosition: null },
                         );
                       }}
-                      aria-label={`${member.name || member.nickname} 역할`}
+                      aria-label={`${member.name} 역할`}
                     >
                       <option value="USER">일반 회원</option>
                       <option value="LEADER">팀장</option>
@@ -244,7 +244,7 @@ export function MembersManager() {
                       value={member.status}
                       onClick={(event) => event.stopPropagation()}
                       onChange={(event) => void updateUser(member.id, { status: event.target.value as User["status"] })}
-                      aria-label={`${member.name || member.nickname} 상태`}
+                      aria-label={`${member.name} 상태`}
                     >
                       <option value="ACTIVE">활성</option>
                       <option value="SUSPENDED">정지</option>
@@ -269,7 +269,7 @@ export function MembersManager() {
         <Dialog title="회원 상세" onClose={() => setSelected(null)} size="sm">
           <dl className="grid grid-cols-[100px_1fr] gap-x-4 gap-y-4 p-5 text-sm">
             <dt className="font-bold text-gray-500">이름</dt>
-            <dd className="font-bold text-gray-950">{selected.name || selected.nickname}</dd>
+            <dd className="font-bold text-gray-950">{selected.name}</dd>
             <dt className="font-bold text-gray-500">연락처</dt>
             <dd>{selected.phone || "미입력"}</dd>
             <dt className="font-bold text-gray-500">소속 팀</dt>

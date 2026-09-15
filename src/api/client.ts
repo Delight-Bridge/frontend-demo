@@ -223,7 +223,6 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     const registeredAt = new Date().toISOString();
     Object.assign(user, {
       name: body.name.trim(),
-      nickname: body.name.trim(),
       phone: body.phone.trim(),
       email,
       socialProvider: "",
@@ -254,7 +253,7 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     if (method === "PATCH") {
       const { privacyConsent } = body;
       const values: Partial<User> = {};
-      for (const key of ["name", "phone", "nickname", "profileImageUrl"] as const) {
+      for (const key of ["name", "phone", "profileImageUrl"] as const) {
         if (typeof body[key] === "string") values[key] = body[key];
       }
       if (needsOnboarding() && (!values.name?.trim() || !values.phone?.trim() || privacyConsent !== true))
@@ -693,7 +692,6 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
       items = items.filter(
         (item) =>
           item.name.toLowerCase().includes(q) ||
-          item.nickname.toLowerCase().includes(q) ||
           item.phone.includes(q) ||
           item.socialProvider.includes(q) ||
           item.team?.name.toLowerCase().includes(q),
@@ -770,7 +768,7 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
             fromStatus: application.status,
             toStatus: body.status,
             changedBy: admin.id,
-            changedByName: admin.name || admin.nickname,
+            changedByName: admin.name,
             changedAt: new Date().toISOString(),
           },
         ];
@@ -868,7 +866,7 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
           fromStatus: application.status,
           toStatus: nextStatus,
           changedBy: user.id,
-          changedByName: user.name || user.nickname,
+          changedByName: user.name,
           changedAt: new Date().toISOString(),
         },
       ],

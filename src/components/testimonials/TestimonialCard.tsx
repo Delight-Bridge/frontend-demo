@@ -33,11 +33,11 @@ export function TestimonialCard({
               />
             ) : (
               <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand-100 text-sm font-bold text-brand-800 sm:h-10 sm:w-10">
-                {post.author?.nickname?.slice(0, 1)}
+                {post.author?.name?.slice(0, 1)}
               </span>
             )}
             <div className="min-w-0">
-              <p className="truncate text-sm font-bold text-gray-900">{post.author?.nickname}</p>
+              <p className="truncate text-sm font-bold text-gray-900">{post.author?.name}</p>
               <p className="text-xs text-gray-500">
                 {new Date(post.createdAt).toLocaleDateString("ko-KR")}
                 {post.updatedAt !== post.createdAt && " · 수정됨"}

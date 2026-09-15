@@ -105,7 +105,7 @@ export function TestimonyListPage() {
                             <span className="font-normal text-gray-400">[{post.commentCount}]</span>
                           </a>
                         </td>
-                        <td className="px-5 py-5 text-center">{post.author.nickname}</td>
+                        <td className="px-5 py-5 text-center">{post.author.name}</td>
                         <td className="px-5 py-5 text-center text-gray-500">
                           <time dateTime={post.createdAt}>{new Date(post.createdAt).toLocaleDateString("ko-KR")}</time>
                         </td>

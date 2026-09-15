@@ -13,8 +13,17 @@ export function SiteHeader() {
   const { user, loading, demoLoginEnabled, openLogin, demoLogin, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [demoError, setDemoError] = useState("");
-  const displayName = user?.name || user?.nickname;
-  const accountTitle = user?.role === "USER" ? "빛누리" : (user?.nickname ?? "");
+  const displayName = user?.name;
+  const accountTitle =
+    user?.role === "ADMIN"
+      ? "운영 관리자"
+      : user?.role === "AUTHORIZED_UPLOADER"
+        ? user.teamPosition === "DEPUTY_LEADER"
+          ? "부팀장"
+          : "팀장"
+        : user?.role === "USER"
+          ? "빛누리"
+          : "";
   const loginWithDemo = async (account: "admin" | "uploader" | "user") => {
     setDemoError("");
     try {

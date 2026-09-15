@@ -112,7 +112,7 @@ export function TestimonyDetailPage() {
                   {post.title}
                 </h1>
                 <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-gray-500">
-                  <span>{post.author.nickname}</span>
+                  <span>{post.author.name}</span>
                   <span aria-hidden="true">·</span>
                   <time dateTime={post.createdAt}>{new Date(post.createdAt).toLocaleString("ko-KR")}</time>
                 </div>

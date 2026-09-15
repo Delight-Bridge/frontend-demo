@@ -69,10 +69,10 @@ export function TestimonyDetail({
           <div className="p-5 md:p-7">
             <div className="mb-6 flex items-center gap-3">
               <span className="grid h-10 w-10 place-items-center rounded-full bg-brand-100 font-bold text-brand-800">
-                {post.author.nickname.slice(0, 1)}
+                {post.author.name.slice(0, 1)}
               </span>
               <div>
-                <p className="text-sm font-bold">{post.author.nickname}</p>
+                <p className="text-sm font-bold">{post.author.name}</p>
                 <p className="text-xs text-gray-500">{new Date(post.createdAt).toLocaleString("ko-KR")}</p>
               </div>
             </div>

@@ -105,13 +105,13 @@ export function ApplicationForm({
             onChange={(event) => {
               const selected = users.find((user) => user.id === event.target.value);
               set("userId", event.target.value);
-              if (selected && !form.applicantName) set("applicantName", selected.nickname);
+              if (selected && !form.applicantName) set("applicantName", selected.name);
             }}
           >
             <option value="">비회원 또는 연결 안 함</option>
             {users.map((user) => (
               <option key={user.id} value={user.id}>
-                {user.nickname}
+                {user.name}
               </option>
             ))}
           </select>
