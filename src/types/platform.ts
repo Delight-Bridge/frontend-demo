@@ -15,6 +15,7 @@ export type User = {
   requestedMinistryTeamId: string | null;
   teamChangeRequestedAt: string;
   role: Role;
+  teamPosition?: "LEADER" | "DEPUTY_LEADER" | null;
   status: "ACTIVE" | "SUSPENDED";
   createdAt: string;
   updatedAt: string;
@@ -155,8 +156,7 @@ export type TestimonyPost = {
   comments?: TestimonyComment[];
 };
 
-export type ApplicationStatus =
-  "SUBMITTED" | "LEADER_CONFIRMED" | "REJECTED" | "CANCELLED" | "COMPLETED";
+export type ApplicationStatus = "SUBMITTED" | "LEADER_CONFIRMED" | "REJECTED" | "CANCELLED" | "COMPLETED";
 
 export type VolunteerApplication = {
   id: string;
@@ -199,7 +199,7 @@ export type TeamMembership = {
   id: string;
   userId: string;
   ministryTeamId: string;
-  membershipRole: "MEMBER" | "LEADER";
+  membershipRole: "MEMBER" | "LEADER" | "DEPUTY_LEADER";
   status: "ACTIVE" | "INACTIVE";
   joinedAt: string;
   leftAt: string;

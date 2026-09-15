@@ -20,6 +20,15 @@ export function TeamOverviewDialog({
   const [selectedUserId, setSelectedUserId] = useState("");
   const [editingPost, setEditingPost] = useState<GalleryPost | "new" | null>(null);
   const [error, setError] = useState("");
+  const [savingMember, setSavingMember] = useState(false);
+  const leaderCount = overview?.memberships.filter((member) => member.membershipRole === "LEADER").length ?? 0;
+  const deputyCount = overview?.memberships.filter((member) => member.membershipRole === "DEPUTY_LEADER").length ?? 0;
+  const positionFull = (user: AdminTeamOverview["eligibleUsers"][number]) =>
+    user.role === "AUTHORIZED_UPLOADER" &&
+    (user.teamPosition === "DEPUTY_LEADER" ? deputyCount >= 1 : leaderCount >= 1);
+  const selectedLeaderAtCapacity = overview?.eligibleUsers.some(
+    (user) => user.id === selectedUserId && positionFull(user),
+  );
 
   const load = useCallback(async () => {
     try {
@@ -46,6 +55,7 @@ export function TeamOverviewDialog({
 
   const addMember = async () => {
     if (!selectedUserId) return;
+    setSavingMember(true);
     try {
       await api(`/admin/teams/${team.id}/members`, {
         method: "POST",
@@ -54,16 +64,36 @@ export function TeamOverviewDialog({
       await load();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "회원을 팀에 추가하지 못했습니다.");
+    } finally {
+      setSavingMember(false);
     }
   };
 
   const removeMember = async (userId: string) => {
     if (!window.confirm("이 회원의 팀 소속을 해제할까요? 기존 이력은 보존됩니다.")) return;
+    setSavingMember(true);
     try {
       await api(`/admin/teams/${team.id}/members/${userId}`, { method: "DELETE" });
       await load();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "팀 소속을 해제하지 못했습니다.");
+    } finally {
+      setSavingMember(false);
+    }
+  };
+
+  const changeMemberRole = async (userId: string, membershipRole: string) => {
+    setSavingMember(true);
+    try {
+      await api(`/admin/teams/${team.id}/members/${userId}`, {
+        method: "PATCH",
+        body: JSON.stringify({ membershipRole }),
+      });
+      await load();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "팀장 지정을 변경하지 못했습니다.");
+    } finally {
+      setSavingMember(false);
     }
   };
 
@@ -97,26 +127,32 @@ export function TeamOverviewDialog({
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <h3 className="font-bold">소속 회원·팀장</h3>
-              <p className="mt-1 text-xs text-gray-500">일반 회원은 팀원으로, 업로더는 담당 팀장으로 배정됩니다.</p>
+              <p className="mt-1 text-xs text-gray-500">
+                팀장 {leaderCount}/1명 · 부팀장 {deputyCount}/1명
+              </p>
+              <p className="mt-1 text-xs text-gray-500">
+                팀장과 부팀장은 동일한 권한으로 담당 팀의 콘텐츠 관리와 봉사 신청 승인을 담당합니다.
+              </p>
             </div>
             <div className="flex min-w-0 flex-1 gap-2 sm:max-w-md">
               <select
                 className={inputClass}
                 value={selectedUserId}
+                disabled={savingMember}
                 onChange={(event) => setSelectedUserId(event.target.value)}
                 aria-label="팀에 추가할 회원"
               >
                 <option value="">추가 가능한 회원 선택</option>
                 {overview?.eligibleUsers.map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.nickname} ({user.role === "AUTHORIZED_UPLOADER" ? "업로더" : user.name})
+                  <option key={user.id} value={user.id} disabled={positionFull(user)}>
+                    {user.name}
                   </option>
                 ))}
               </select>
               <button
                 type="button"
                 onClick={() => void addMember()}
-                disabled={!selectedUserId}
+                disabled={!selectedUserId || savingMember || selectedLeaderAtCapacity}
                 className="flex h-10 shrink-0 items-center gap-2 rounded-md bg-brand-400 px-3 text-sm font-bold text-darkness disabled:opacity-40 hover:bg-brand-500"
               >
                 <UserPlus size={16} />
@@ -124,24 +160,57 @@ export function TeamOverviewDialog({
               </button>
             </div>
           </div>
+          {leaderCount >= 1 && deputyCount >= 1 && (
+            <p className="mt-3 text-xs text-amber-800">
+              팀장과 부팀장이 모두 지정되어 있습니다. 기존 담당자를 일반 팀원으로 변경하면 새 담당자를 지정할 수
+              있습니다.
+            </p>
+          )}
           <div className="mt-4 divide-y rounded-md border">
             {overview?.memberships.map((membership) => (
               <div key={membership.id} className="flex items-center justify-between gap-3 p-3">
                 <div>
-                  <p className="text-sm font-bold">{membership.user.nickname}</p>
+                  <p className="text-sm font-bold">{membership.user.name}</p>
                   <p className="mt-1 text-xs text-gray-500">
                     가입 {new Date(membership.joinedAt).toLocaleDateString("ko-KR")} ·{" "}
-                    {membership.membershipRole === "LEADER" ? "담당 팀장" : "일반 팀원"}
+                    {membership.membershipRole === "LEADER"
+                      ? "팀장"
+                      : membership.membershipRole === "DEPUTY_LEADER"
+                        ? "부팀장"
+                        : "일반 팀원"}
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => void removeMember(membership.userId)}
-                  className="grid h-9 w-9 place-items-center text-red-500"
-                  aria-label={`${membership.user.nickname} 팀 소속 해제`}
-                >
-                  <UserMinus size={17} />
-                </button>
+                <div className="flex items-center gap-2">
+                  {membership.user.role !== "ADMIN" && (
+                    <select
+                      className={inputClass}
+                      value={membership.membershipRole}
+                      disabled={savingMember}
+                      onChange={(event) => void changeMemberRole(membership.userId, event.target.value)}
+                      aria-label={`${membership.user.name} 팀 내 역할`}
+                    >
+                      <option value="MEMBER">일반 팀원</option>
+                      <option value="LEADER" disabled={leaderCount >= 1 && membership.membershipRole !== "LEADER"}>
+                        팀장
+                      </option>
+                      <option
+                        value="DEPUTY_LEADER"
+                        disabled={deputyCount >= 1 && membership.membershipRole !== "DEPUTY_LEADER"}
+                      >
+                        부팀장
+                      </option>
+                    </select>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => void removeMember(membership.userId)}
+                    disabled={savingMember}
+                    className="grid h-9 w-9 place-items-center text-red-500"
+                    aria-label={`${membership.user.name} 팀 소속 해제`}
+                  >
+                    <UserMinus size={17} />
+                  </button>
+                </div>
               </div>
             ))}
             {overview && !overview.memberships.length && (

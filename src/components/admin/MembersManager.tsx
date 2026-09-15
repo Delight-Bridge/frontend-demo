@@ -53,7 +53,10 @@ export function MembersManager() {
       .catch((caught) => setError(caught instanceof Error ? caught.message : "사역팀을 불러오지 못했습니다."));
   }, []);
 
-  const updateUser = async (id: string, update: Partial<Pick<User, "role" | "status" | "ministryTeamId">>) => {
+  const updateUser = async (
+    id: string,
+    update: Partial<Pick<User, "role" | "status" | "ministryTeamId" | "teamPosition">>,
+  ) => {
     try {
       await api(`/admin/users/${id}`, { method: "PATCH", body: JSON.stringify(update) });
       await load();
@@ -216,13 +219,22 @@ export function MembersManager() {
                   <td className="px-4 py-4">
                     <select
                       className={inputClass}
-                      value={member.role}
+                      value={member.role === "AUTHORIZED_UPLOADER" ? (member.teamPosition ?? "LEADER") : member.role}
                       onClick={(event) => event.stopPropagation()}
-                      onChange={(event) => void updateUser(member.id, { role: event.target.value as Role })}
+                      onChange={(event) => {
+                        const position = event.target.value;
+                        void updateUser(
+                          member.id,
+                          position === "LEADER" || position === "DEPUTY_LEADER"
+                            ? { role: "AUTHORIZED_UPLOADER", teamPosition: position }
+                            : { role: position as Role, teamPosition: null },
+                        );
+                      }}
                       aria-label={`${member.name || member.nickname} 역할`}
                     >
                       <option value="USER">일반 회원</option>
-                      <option value="AUTHORIZED_UPLOADER">콘텐츠 업로더</option>
+                      <option value="LEADER">팀장</option>
+                      <option value="DEPUTY_LEADER">부팀장</option>
                       <option value="ADMIN">관리자</option>
                     </select>
                   </td>
@@ -263,7 +275,13 @@ export function MembersManager() {
             <dt className="font-bold text-gray-500">소속 팀</dt>
             <dd>{selected.team?.name ?? "소속 없음"}</dd>
             <dt className="font-bold text-gray-500">역할</dt>
-            <dd>{roleLabel[selected.role]}</dd>
+            <dd>
+              {selected.role === "AUTHORIZED_UPLOADER"
+                ? selected.teamPosition === "DEPUTY_LEADER"
+                  ? "부팀장"
+                  : "팀장"
+                : roleLabel[selected.role]}
+            </dd>
             <dt className="font-bold text-gray-500">상태</dt>
             <dd>{selected.status === "ACTIVE" ? "활성" : "정지"}</dd>
             <dt className="font-bold text-gray-500">로그인 연동</dt>
