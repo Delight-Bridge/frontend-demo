@@ -7,7 +7,7 @@ import {
   demoTestimonies,
   demoUsers,
 } from "../data/demoData";
-import type { GalleryComment, GalleryPost, PageResult, TestimonyPost, VolunteerApplication } from "../types/platform";
+import type { GalleryComment, GalleryPost, MinistryTeam, PageResult, TestimonyPost, VolunteerApplication } from "../types/platform";
 
 export class ApiError extends Error {
   constructor(
@@ -77,6 +77,29 @@ const update = <T extends { id: string }>(items: T[], itemId: string, values: Pa
   return item;
 };
 const newId = (prefix: string) => `${prefix}-${crypto.randomUUID()}`;
+const teamValues = (body: Record<string, unknown>, creating = false): Partial<MinistryTeam> => {
+  const values: Partial<MinistryTeam> = {};
+  const required = ["name", "shortDescription", "vision", "activities", "schedule"] as const;
+  const fields = [...required, "targetAudience", "contactInfo", "kakaoInviteUrl"] as const;
+  for (const field of fields) {
+    if (!(field in body) && !creating) continue;
+    const value = body[field] ?? "";
+    if (typeof value !== "string") throw new ApiError(400, "사역팀 정보를 올바르게 입력해 주세요.");
+    if (required.some((key) => key === field) && !value.trim())
+      throw new ApiError(400, "사역팀명, 한 줄 소개, 비전, 주요 활동, 활동 일정을 입력해 주세요.");
+    values[field] = value.trim();
+  }
+  if ("displayOrder" in body) {
+    if (typeof body.displayOrder !== "number" || !Number.isSafeInteger(body.displayOrder) || body.displayOrder < 1)
+      throw new ApiError(400, "노출 순서는 1 이상의 정수로 입력해 주세요.");
+    values.displayOrder = body.displayOrder;
+  }
+  if ("isVisible" in body) {
+    if (typeof body.isVisible !== "boolean") throw new ApiError(400, "공개 여부를 올바르게 선택해 주세요.");
+    values.isVisible = body.isVisible;
+  }
+  return values;
+};
 const teamFor = (teamId: string) => {
   const team = db.teams.find((item) => item.id === teamId);
   return team ? { id: team.id, name: team.name } : null;
@@ -249,13 +272,61 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
   }
 
   if (route === "/teams" && method === "GET")
-    return db.teams.filter((item) => item.isVisible || url.searchParams.get("includeHidden") === "true") as T;
+    return db.teams
+      .filter((item) => item.isVisible || url.searchParams.get("includeHidden") === "true")
+      .sort((a, b) => a.displayOrder - b.displayOrder) as T;
+  if (route === "/teams" && method === "POST") {
+    requireAdmin();
+    const values = teamValues(body, true);
+    const timestamp = new Date().toISOString();
+    const team: MinistryTeam = {
+      name: "",
+      shortDescription: "",
+      vision: "",
+      activities: "",
+      schedule: "",
+      targetAudience: "",
+      contactInfo: "",
+      kakaoInviteUrl: "",
+      displayOrder: Math.max(0, ...db.teams.map((item) => item.displayOrder)) + 1,
+      isVisible: true,
+      ...values,
+      id: newId("team"),
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    };
+    db.teams.push(team);
+    return team as T;
+  }
+  if (/^\/teams\/[^/]+$/.test(route) && method === "DELETE") {
+    requireAdmin();
+    const teamId = route.split("/")[2];
+    if (!db.teams.some((item) => item.id === teamId)) throw new ApiError(404, "사역팀을 찾을 수 없습니다.");
+    const hasRelatedData =
+      db.users.some((item) => item.ministryTeamId === teamId || item.requestedMinistryTeamId === teamId) ||
+      [db.activities, db.applications, db.gallery, db.testimonies].some((items) =>
+        items.some((item) => item.ministryTeamId === teamId),
+      );
+    if (hasRelatedData)
+      throw new ApiError(
+        409,
+        "소속 회원, 가입 신청 또는 활동·게시물 이력이 있는 사역팀은 삭제할 수 없습니다. 사역팀 수정에서 비공개로 설정할 수 있습니다.",
+      );
+    remove(db.teams, teamId);
+    return undefined as T;
+  }
   if (route.startsWith("/teams/") && method === "PATCH") {
     const user = requireUser();
     const teamId = route.split("/")[2];
     if (user.role !== "ADMIN" && !(user.role === "AUTHORIZED_UPLOADER" && teamId === user.ministryTeamId))
       throw new ApiError(403, "담당 팀 정보만 수정할 수 있습니다.");
-    return update(db.teams, teamId, body) as T;
+    const team = update(db.teams, teamId, teamValues(body));
+    for (const items of [db.activities, db.applications, db.gallery, db.testimonies]) {
+      for (const item of items) {
+        if (item.ministryTeamId === teamId) item.team = { id: team.id, name: team.name };
+      }
+    }
+    return team as T;
   }
   if (route === "/activities/home-preview")
     return {

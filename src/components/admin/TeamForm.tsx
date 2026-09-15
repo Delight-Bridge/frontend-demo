@@ -4,8 +4,27 @@ import type { MinistryTeam } from "../../types/platform";
 import { Dialog } from "../common/Dialog";
 import { Field, FormError, inputClass } from "../common/FormControls";
 
-export function TeamForm({ team, onClose, onSaved }: { team: MinistryTeam; onClose: () => void; onSaved: () => void }) {
-  const [form, setForm] = useState(team);
+export function TeamForm({
+  team,
+  onClose,
+  onSaved,
+}: {
+  team?: MinistryTeam;
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const [form, setForm] = useState({
+    name: team?.name ?? "",
+    shortDescription: team?.shortDescription ?? "",
+    vision: team?.vision ?? "",
+    activities: team?.activities ?? "",
+    schedule: team?.schedule ?? "",
+    targetAudience: team?.targetAudience ?? "",
+    contactInfo: team?.contactInfo ?? "",
+    kakaoInviteUrl: team?.kakaoInviteUrl ?? "",
+    displayOrder: team?.displayOrder ?? 1,
+    isVisible: team?.isVisible ?? true,
+  });
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const set = (key: keyof MinistryTeam, value: string | number | boolean) =>
@@ -15,7 +34,10 @@ export function TeamForm({ team, onClose, onSaved }: { team: MinistryTeam; onClo
     setSaving(true);
     setError("");
     try {
-      await api(`/teams/${team.id}`, { method: "PATCH", body: JSON.stringify(form) });
+      await api(team ? `/teams/${team.id}` : "/teams", {
+        method: team ? "PATCH" : "POST",
+        body: JSON.stringify(form),
+      });
       onSaved();
       onClose();
     } catch (caught) {
@@ -25,7 +47,7 @@ export function TeamForm({ team, onClose, onSaved }: { team: MinistryTeam; onClo
     }
   };
   return (
-    <Dialog title="사역팀 정보 수정" onClose={onClose} size="lg">
+    <Dialog title={team ? "사역팀 정보 수정" : "사역팀 등록"} onClose={onClose} size="lg">
       <form onSubmit={submit} className="grid gap-4 p-5 md:grid-cols-2">
         <Field label="사역팀명" required>
           <input required className={inputClass} value={form.name} onChange={(e) => set("name", e.target.value)} />
@@ -85,6 +107,17 @@ export function TeamForm({ team, onClose, onSaved }: { team: MinistryTeam; onClo
             value={form.kakaoInviteUrl}
             onChange={(e) => set("kakaoInviteUrl", e.target.value)}
             placeholder="https://open.kakao.com/o/..."
+          />
+        </Field>
+        <Field label="노출 순서" required>
+          <input
+            required
+            type="number"
+            min={1}
+            step={1}
+            className={inputClass}
+            value={form.displayOrder}
+            onChange={(e) => set("displayOrder", Number(e.target.value))}
           />
         </Field>
         <label className="flex items-center gap-2 text-sm">
