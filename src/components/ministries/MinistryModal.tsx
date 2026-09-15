@@ -213,11 +213,11 @@ export function MinistryModal({
             {current.comments.map((item) => (
               <div key={item.id} className="group flex gap-3">
                 <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-gray-200 text-xs font-bold text-gray-600">
-                  {item.author.nickname.slice(0, 1)}
+                  {item.author.name.slice(0, 1)}
                 </span>
                 <div className="min-w-0 flex-1 text-sm leading-6">
                   <p>
-                    <strong className="mr-2">{item.author.nickname}</strong>
+                    <strong className="mr-2">{item.author.name}</strong>
                     {item.content}
                   </p>
                   <p className="mt-1 text-[11px] text-gray-400">
@@ -229,7 +229,7 @@ export function MinistryModal({
                     type="button"
                     onClick={() => void removeComment(item)}
                     className="grid h-8 w-8 shrink-0 place-items-center text-gray-300 opacity-0 transition hover:text-red-500 group-hover:opacity-100 focus:opacity-100"
-                    aria-label={`${item.author.nickname} 댓글 삭제`}
+                    aria-label={`${item.author.name} 댓글 삭제`}
                   >
                     <Trash2 size={14} />
                   </button>
