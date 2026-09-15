@@ -1,4 +1,4 @@
-import { ArrowRight, EyeOff, Pencil, Trash2 } from "lucide-react";
+import { ExternalLink, EyeOff, Pencil, Trash2 } from "lucide-react";
 import type { NewsArticle } from "../../types/platform";
 
 type NewsCardProps = {
@@ -36,9 +36,11 @@ export function NewsCard({ article, canManage, onEdit, onDelete }: NewsCardProps
         </div>
       )}
       <a
-        href={`/news/${article.id}`}
+        href={article.sourceUrl}
+        target="_blank"
+        rel="noopener noreferrer"
         className="flex h-full flex-col text-gray-900"
-        aria-label={`${article.title} 상세 보기`}
+        aria-label={`${article.title} 원문 보기 (새 탭)`}
       >
         <div className="aspect-[16/10] shrink-0 overflow-hidden bg-gray-200">
           <img
@@ -53,7 +55,7 @@ export function NewsCard({ article, canManage, onEdit, onDelete }: NewsCardProps
             <span className="font-bold text-brand-800">{article.sourceName || "원문"}</span>
             <span aria-hidden="true">·</span>
             <time className="whitespace-nowrap">{article.publishedAt}</time>
-            <ArrowRight className="ml-auto shrink-0" size={14} aria-hidden="true" />
+            <ExternalLink className="ml-auto shrink-0" size={14} aria-hidden="true" />
           </div>
         </div>
       </a>

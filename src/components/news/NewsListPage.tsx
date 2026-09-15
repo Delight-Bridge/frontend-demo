@@ -146,7 +146,10 @@ export function NewsListPage() {
                           </td>
                           <td className="px-5 py-5">
                             <a
-                              href={`/news/${article.id}`}
+                              href={article.sourceUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              aria-label={`${article.title} 원문 보기 (새 탭)`}
                               className="flex items-center gap-4 font-bold text-gray-950 hover:text-brand-800"
                             >
                               <img

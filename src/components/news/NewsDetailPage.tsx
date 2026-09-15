@@ -14,6 +14,10 @@ export function NewsDetailPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setArticle(null);
+    setError("");
     if (!articleId) {
       setError("기사 주소가 올바르지 않습니다.");
       setLoading(false);
@@ -21,11 +25,20 @@ export function NewsDetailPage() {
     }
     api<NewsArticle>(`/news/${articleId}`)
       .then((data) => {
+        if (cancelled) return;
         setArticle(data);
         setError("");
+        window.location.replace(data.sourceUrl);
       })
-      .catch((caught) => setError(caught instanceof Error ? caught.message : "기사를 불러오지 못했습니다."))
-      .finally(() => setLoading(false));
+      .catch((caught) => {
+        if (!cancelled) setError(caught instanceof Error ? caught.message : "기사를 불러오지 못했습니다.");
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [articleId]);
 
   return (
@@ -76,21 +89,15 @@ export function NewsDetailPage() {
                 <h1 className="mt-4 font-serif text-3xl font-bold leading-tight text-gray-950 md:text-4xl">
                   {article.title}
                 </h1>
-                <div className="mt-8 border-y py-7">
-                  <h2 className="text-sm font-bold tracking-wide text-gray-900">기사 요약</h2>
-                  <p className="mt-3 whitespace-pre-line text-base leading-8 text-gray-700">{article.summary}</p>
-                </div>
                 <div className="mt-7 flex flex-wrap items-center justify-between gap-4">
                   <p className="text-xs leading-5 text-gray-500">
-                    기사 전문과 최신 내용은 원문 사이트에서 확인해 주세요.
+                    기사 전문으로 이동 중입니다. 자동으로 이동하지 않으면 아래 버튼을 눌러 주세요.
                   </p>
                   <a
                     href={article.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className="inline-flex h-11 items-center gap-2 rounded-md bg-darkness px-5 text-sm font-bold text-white hover:bg-gray-700"
                   >
-                    원문 보기
+                    기사 전문 보기
                     <ExternalLink size={16} />
                   </a>
                 </div>
