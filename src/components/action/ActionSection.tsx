@@ -4,6 +4,7 @@ import { api } from "../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import type { HomeActivityPreview, VolunteerActivity, VolunteerApplication } from "../../types/platform";
 import { ParticipationDialog } from "./ParticipationDialog";
+import { SectionHeading } from "../SectionHeading";
 
 function formatDate(date: string, withWeekday = false) {
   return new Intl.DateTimeFormat("ko-KR", {
@@ -79,12 +80,13 @@ export function ActionSection() {
           <span className="mb-4 inline-block rounded-full border border-gray-200 bg-brand-100 px-3 py-1 text-xs font-bold tracking-widest text-brand-800">
             ACTION
           </span>
-          <h2 className="text-3xl font-bold md:text-4xl">당신의 차례입니다</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-gray-600">
-            {showingRecentTeams
-              ? "새로운 모집을 기다리는 동안 최근 현장을 만나보세요."
-              : "받은 은혜를 흘려보낼 곳을 선택해 주세요."}
-          </p>
+          <SectionHeading
+            title="당신의 차례입니다"
+            description="받은 은혜를 흘려보낼 곳을 선택해 주세요."
+            href="/volunteer"
+            align="center"
+            titleClassName="font-serif"
+          />
           {!loading && !error && (
             <p className="mt-6 flex justify-end text-sm font-bold text-brand-800">
               {currentMonth}월 신청 가능한 봉사는 총 {currentMonthActivityCount}개입니다.
