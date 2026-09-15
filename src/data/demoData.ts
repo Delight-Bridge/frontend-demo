@@ -690,6 +690,58 @@ export const demoTestimonies: TestimonyPost[] = [
   },
 ];
 
+const additionalTestimonySeeds = [
+  {
+    title: "따뜻한 한 끼가 열어 준 마음",
+    content:
+      "김밥을 포장하던 첫날에는 실수할까 봐 손끝에 힘이 잔뜩 들어갔습니다. 옆에서 천천히 해도 괜찮다고 말해 주신 팀원 덕분에 저도 조금씩 웃으며 함께할 수 있었습니다.\n\n식사를 받아 든 이웃이 건넨 짧은 인사가 오래 마음에 남았습니다. 작은 나눔을 준비하는 시간이 제 일상에도 따뜻한 자리를 만들어 주었습니다.",
+    teamIndex: 0,
+  },
+  {
+    title: "이름을 부르고 안부를 묻는 사이",
+    content:
+      "거리에서 만난 이웃에게 어떤 말을 건네야 할지 몰라 한동안 식사만 전했습니다. 여러 번 같은 자리에서 만나며 날씨 이야기를 하고 서로의 안부를 묻게 되었습니다.\n\n어느 날 제 이름을 기억하고 불러 주셨을 때, 우리 사이에도 작은 신뢰가 쌓이고 있음을 느꼈습니다. 다음 만남을 기다리는 마음이 제게도 큰 힘이 됩니다.",
+    teamIndex: 1,
+  },
+  {
+    title: "함께 걷는 속도를 배웠습니다",
+    content:
+      "봉사에 참여하면 무언가 눈에 보이는 도움을 드려야 한다고 생각했습니다. 하지만 이야기를 끝까지 듣고, 잠시 멈추고, 상대의 속도에 맞춰 걷는 시간이 더 소중할 때가 있었습니다.\n\n늘 서두르던 제 마음도 조금씩 여유를 찾았습니다. 함께하는 기도 속에서 오늘 곁을 지키는 일부터 충실히 해 보자는 용기를 얻었습니다.",
+    teamIndex: 2,
+  },
+  {
+    title: "작은 약속이 다시 시작할 용기가 되어",
+    content:
+      "지친 마음으로 처음 모임에 갔을 때 팀원들은 제 이야기를 재촉하지 않고 기다려 주었습니다. 다음 주에 다시 만나자는 평범한 약속이 그 한 주를 보내는 힘이 되었습니다.\n\n이제는 저도 처음 온 분에게 먼저 자리를 내어 드립니다. 받은 환대를 작은 행동으로 나누며, 함께 살아가는 기쁨을 다시 배우고 있습니다.",
+    teamIndex: 3,
+  },
+];
+
+demoTestimonies.push(
+  ...additionalTestimonySeeds.map(({ title, content, teamIndex }, index): TestimonyPost => {
+    const team = demoTeams[teamIndex];
+    const author = demoUsers[index % 2 === 0 ? 2 : 3];
+    return {
+      id: `testimony-${index + 3}`,
+      ministryTeamId: team.id,
+      team: { id: team.id, name: team.name },
+      title,
+      content,
+      thumbnailUrl: "",
+      authorId: author.id,
+      author,
+      visibility: "PUBLIC",
+      createdAt: now,
+      updatedAt: now,
+      likeCount: 5 + index,
+      commentCount: 0,
+      likedByMe: false,
+      canManage: false,
+      comments: [],
+    };
+  }),
+);
+
 const history = (applicationId: string, toStatus: ApplicationStatusHistory["toStatus"]): ApplicationStatusHistory[] => [
   {
     id: `history-${applicationId}`,

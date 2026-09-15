@@ -16,9 +16,9 @@ export function TestimonialCard({
   onDelete: () => void;
 }) {
   return (
-    <article className="flex min-h-48 overflow-hidden rounded-lg border border-gray-200 bg-white sm:min-h-56">
+    <article className="flex min-h-48 flex-col overflow-hidden rounded-lg border border-gray-200 bg-white sm:min-h-56">
       {post.thumbnailUrl && (
-        <button onClick={onOpen} className="w-28 shrink-0 overflow-hidden bg-gray-100 sm:w-48 xl:w-56">
+        <button onClick={onOpen} className="aspect-[16/9] w-full shrink-0 overflow-hidden bg-gray-100">
           <img src={post.thumbnailUrl} alt={`${post.title} 대표 이미지`} className="h-full w-full object-cover" />
         </button>
       )}

@@ -86,7 +86,7 @@ export function TestimonialSection() {
         {!loading && !posts.length && (
           <p className="py-16 text-center text-sm text-gray-500">등록된 간증이 없습니다.</p>
         )}
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 grid-cols-2">
           {posts.slice((page - 1) * pageSize, page * pageSize).map((post) => (
             <TestimonialCard
               key={post.id}
