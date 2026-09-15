@@ -143,10 +143,21 @@ const activityFor = (activityId: string) => {
   const activity = db.activities.find((item) => item.id === activityId);
   return activity ? { id: activity.id, title: activity.title, availableDates: activity.availableDates } : null;
 };
+const requireGalleryTeam = (user: User, teamId: string) => {
+  if (
+    user.role !== "ADMIN" &&
+    !(user.role === "AUTHORIZED_UPLOADER" && user.ministryTeamId && user.ministryTeamId === teamId)
+  )
+    throw new ApiError(403, "팀장은 소속 사역팀의 게시물만 작성·수정·삭제할 수 있습니다.");
+  const team = teamFor(teamId);
+  if (!team) throw new ApiError(400, "게시물을 작성할 사역팀을 선택해 주세요.");
+  return team;
+};
 const galleryForViewer = (post: GalleryPost) => {
   const mutable = post as GalleryPost & { likedUserIds?: string[] };
   return {
     ...post,
+    team: teamFor(post.ministryTeamId) ?? post.team,
     likedByMe: Boolean(mutable.likedUserIds?.includes(currentUser()?.id ?? "")),
     canManage:
       currentUser()?.role === "ADMIN" ||
@@ -428,18 +439,23 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
       .filter(
         (item) =>
           (!teamId || item.ministryTeamId === teamId) &&
-          (item.isVisible || url.searchParams.get("includeHidden") === "true"),
+          (item.isVisible ||
+            (url.searchParams.get("includeHidden") === "true" &&
+              (currentUser()?.role === "ADMIN" ||
+                (currentUser()?.role === "AUTHORIZED_UPLOADER" &&
+                  currentUser()?.ministryTeamId === item.ministryTeamId)))),
       )
       .map(galleryForViewer) as T;
   }
   if (route === "/gallery" && method === "POST") {
     const user = requireUser();
+    const team = requireGalleryTeam(user, body.ministryTeamId);
     const item = {
       ...body,
       id: newId("gallery"),
       authorId: user.id,
       author: user,
-      team: teamFor(body.ministryTeamId),
+      team,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       likeCount: 0,
@@ -449,7 +465,7 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
       canManage: true,
     };
     db.gallery.unshift(item);
-    return item as T;
+    return galleryForViewer(item) as T;
   }
   const galleryLikeMatch = route.match(/^\/gallery\/([^/]+)\/like$/);
   if (galleryLikeMatch && method === "POST") {
@@ -499,11 +515,26 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     }
   }
   if (route.startsWith("/gallery/")) {
-    requireUser();
+    const user = requireUser();
     const itemId = route.split("/")[2];
+    const post = db.gallery.find((item) => item.id === itemId);
+    if (!post) throw new ApiError(404, "현장 게시물을 찾을 수 없습니다.");
+    requireGalleryTeam(user, post.ministryTeamId);
     if (method === "PATCH") {
-      const item = update(db.gallery, itemId, body);
-      item.team = teamFor(item.ministryTeamId) ?? item.team;
+      const teamId = body.ministryTeamId ?? post.ministryTeamId;
+      const team = requireGalleryTeam(user, teamId);
+      const values: Partial<GalleryPost> = {};
+      for (const key of [
+        "title",
+        "content",
+        "thumbnailUrl",
+        "additionalImages",
+        "displayOrder",
+        "isVisible",
+      ] as const) {
+        if (Object.prototype.hasOwnProperty.call(body, key)) Object.assign(values, { [key]: body[key] });
+      }
+      const item = update(db.gallery, itemId, { ...values, ministryTeamId: teamId, team });
       return galleryForViewer(item) as T;
     }
     if (method === "DELETE") {

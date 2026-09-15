@@ -21,7 +21,7 @@ const shuffleTeams = (teams: MinistryTeam[]) => {
 
 export function MinistrySection({ showBreadcrumb = false }: { showBreadcrumb?: boolean }) {
   const { user } = useAuth();
-  const canCreate = user?.role === "ADMIN" || user?.role === "AUTHORIZED_UPLOADER";
+  const canCreate = user?.role === "ADMIN" || (user?.role === "AUTHORIZED_UPLOADER" && Boolean(user.ministryTeamId));
   const [teams, setTeams] = useState<MinistryTeam[]>([]);
   const [posts, setPosts] = useState<GalleryPost[]>([]);
   const [filter, setFilter] = useState("all");
@@ -49,7 +49,7 @@ export function MinistrySection({ showBreadcrumb = false }: { showBreadcrumb?: b
     } finally {
       setLoading(false);
     }
-  }, [canCreate]);
+  }, [canCreate, user?.id, user?.ministryTeamId, user?.role]);
   useEffect(() => {
     void load();
   }, [load]);

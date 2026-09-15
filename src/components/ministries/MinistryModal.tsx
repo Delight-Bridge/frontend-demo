@@ -190,7 +190,7 @@ export function MinistryModal({
             </span>
             <div className="min-w-0">
               <p className="truncate text-sm font-bold">{current.team?.name}</p>
-              <p className="truncate text-xs text-gray-500">{current.author?.nickname}</p>
+              <p className="truncate text-xs text-gray-500">{current.team?.name ?? "사역팀"}</p>
             </div>
           </div>
 

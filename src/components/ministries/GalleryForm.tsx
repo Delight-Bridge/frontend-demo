@@ -1,6 +1,7 @@
 import { ImagePlus, Link, X } from "lucide-react";
 import { useState } from "react";
 import { api, uploadImage } from "../../api/client";
+import { useAuth } from "../../auth/AuthContext";
 import type { GalleryPost, MinistryTeam } from "../../types/platform";
 import { Dialog } from "../common/Dialog";
 import { Field, FormError, inputClass } from "../common/FormControls";
@@ -16,8 +17,12 @@ export function GalleryForm({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  const { user } = useAuth();
+  const availableTeams = teams.filter(
+    (team) => user?.role === "ADMIN" || (user?.role === "AUTHORIZED_UPLOADER" && team.id === user.ministryTeamId),
+  );
   const [form, setForm] = useState({
-    ministryTeamId: post?.ministryTeamId ?? teams[0]?.id ?? "",
+    ministryTeamId: post?.ministryTeamId ?? availableTeams[0]?.id ?? "",
     title: post?.title ?? "",
     content: post?.content ?? "",
     displayOrder: post?.displayOrder ?? 100,
@@ -97,17 +102,20 @@ export function GalleryForm({
         <Field label="사역팀" required>
           <select
             required
+            disabled={user?.role !== "ADMIN"}
             className={inputClass}
             value={form.ministryTeamId}
             onChange={(event) => set("ministryTeamId", event.target.value)}
           >
-            {teams.map((team) => (
+            {availableTeams.map((team) => (
               <option key={team.id} value={team.id}>
                 {team.name}
               </option>
             ))}
           </select>
         </Field>
+        <p className="text-xs text-gray-500">작성자는 선택한 사역팀 이름으로 표시됩니다.</p>
+        {!availableTeams.length && <FormError message="게시물을 작성할 수 있는 소속 사역팀이 없습니다." />}
         <Field label="제목" required>
           <input
             required
@@ -210,7 +218,7 @@ export function GalleryForm({
         </div>
         <FormError message={error} />
         <button
-          disabled={saving || uploading}
+          disabled={saving || uploading || !availableTeams.length}
           className="h-10 w-full rounded-md bg-darkness text-sm font-bold text-white disabled:opacity-40"
         >
           {saving ? "저장 중..." : "저장"}
