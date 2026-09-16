@@ -15,6 +15,8 @@ export function TestimonialCard({
   onEdit: () => void;
   onDelete: () => void;
 }) {
+  const contentCharacters = Array.from(post.content.replace(/\s+/g, " ").trim());
+  const contentPreview = contentCharacters.slice(0, 30).join("") + (contentCharacters.length > 30 ? "..." : "");
   return (
     <article className="flex min-h-48 flex-col overflow-hidden rounded-lg border border-gray-200 bg-white sm:min-h-56">
       {post.thumbnailUrl && (
@@ -73,8 +75,8 @@ export function TestimonialCard({
         </div>
         <button onClick={onOpen} className="block min-w-0 flex-1 text-left">
           <h3 className="line-clamp-2 text-base font-bold text-gray-950 sm:text-xl">{post.title}</h3>
-          <p className="mt-2 line-clamp-2 whitespace-pre-wrap text-sm leading-6 text-gray-700 sm:mt-3 sm:line-clamp-3 sm:leading-7 lg:text-base">
-            {post.content}
+          <p className="mt-2 text-sm leading-6 text-gray-700 sm:mt-3 sm:leading-7 lg:text-base">
+            {contentPreview}
           </p>
           <span className="mt-2 inline-block text-xs font-bold text-brand-800 sm:mt-3">전체 이야기와 댓글 보기</span>
         </button>
